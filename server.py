@@ -1,15 +1,13 @@
 import os
 import secrets
-from flask import Flask, request, jsonify, render_template, send_from_directory, g
+from flask import Flask, request, jsonify, render_template, send_from_directory
 from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
 app.secret_key = os.environ.get('SECRET_KEY', secrets.token_hex(16))
 
-# ---------- Detect environment ----------
 ON_RENDER = os.environ.get('RENDER') == 'true'
 
-# ---------- Database setup ----------
 if ON_RENDER:
     import psycopg2
     from psycopg2.extras import RealDictCursor
@@ -18,7 +16,6 @@ if ON_RENDER:
     if not DATABASE_URL:
         raise ValueError("DATABASE_URL must be set on Render")
 
-    # Create a connection pool (min 1, max 10 connections)
     try:
         connection_pool = psycopg2.pool.SimpleConnectionPool(
             1, 10, dsn=DATABASE_URL, cursor_factory=RealDictCursor
@@ -28,7 +25,6 @@ if ON_RENDER:
         raise
 
     def get_db():
-        """Get a connection from the pool."""
         try:
             return connection_pool.getconn()
         except Exception as e:
@@ -36,10 +32,8 @@ if ON_RENDER:
             raise
 
     def release_db(conn):
-        """Return a connection to the pool."""
         if conn:
             connection_pool.putconn(conn)
-
 else:
     import sqlite3
     def get_db():
@@ -56,7 +50,6 @@ def init_db():
     cur = conn.cursor()
     try:
         if ON_RENDER:
-            # PostgreSQL syntax
             cur.execute('''
                 CREATE TABLE IF NOT EXISTS messages (
                     id SERIAL PRIMARY KEY,
@@ -119,7 +112,6 @@ def init_db():
                 )
             ''')
         else:
-            # SQLite syntax
             cur.execute('''
                 CREATE TABLE IF NOT EXISTS messages (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -188,13 +180,12 @@ def init_db():
 
 init_db()
 
-# ---------- File upload config ----------
 UPLOAD_FOLDER = 'uploads'
 AVATAR_FOLDER = 'avatars'
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'pdf', 'txt', 'docx', 'mp4', 'mp3', 'zip', 'webm', 'ogg', 'm4a', 'aac', 'wav'}
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['AVATAR_FOLDER'] = AVATAR_FOLDER
-app.config['MAX_CONTENT_LENGTH'] = 50 * 1024 * 1024  # 50MB
+app.config['MAX_CONTENT_LENGTH'] = 50 * 1024 * 1024
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 os.makedirs(AVATAR_FOLDER, exist_ok=True)
 
