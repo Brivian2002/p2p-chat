@@ -1,6 +1,5 @@
 import os
 import secrets
-import base64
 from flask import Flask, request, jsonify, render_template, send_from_directory
 from werkzeug.utils import secure_filename
 
@@ -77,12 +76,20 @@ def init_db():
                 timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             )
         ''')
-        # Avatar table
         cur.execute('''
             CREATE TABLE IF NOT EXISTS avatars (
                 user_id TEXT PRIMARY KEY,
                 avatar_url TEXT NOT NULL,
                 updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+        ''')
+        cur.execute('''
+            CREATE TABLE IF NOT EXISTS reactions (
+                id SERIAL PRIMARY KEY,
+                message_id INTEGER NOT NULL,
+                user_id TEXT NOT NULL,
+                emoji TEXT NOT NULL,
+                UNIQUE(message_id, user_id, emoji)
             )
         ''')
     else:
@@ -139,6 +146,15 @@ def init_db():
                 updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
             )
         ''')
+        cur.execute('''
+            CREATE TABLE IF NOT EXISTS reactions (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                message_id INTEGER NOT NULL,
+                user_id TEXT NOT NULL,
+                emoji TEXT NOT NULL,
+                UNIQUE(message_id, user_id, emoji)
+            )
+        ''')
     conn.commit()
     cur.close()
     conn.close()
@@ -148,7 +164,7 @@ init_db()
 # ---------- File upload config ----------
 UPLOAD_FOLDER = 'uploads'
 AVATAR_FOLDER = 'avatars'
-ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'pdf', 'txt', 'docx', 'mp4', 'mp3', 'zip', 'webm', 'ogg', 'm4a', 'aac'}
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'pdf', 'txt', 'docx', 'mp4', 'mp3', 'zip', 'webm', 'ogg', 'm4a', 'aac', 'wav'}
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['AVATAR_FOLDER'] = AVATAR_FOLDER
 app.config['MAX_CONTENT_LENGTH'] = 50 * 1024 * 1024  # 50MB
@@ -164,7 +180,6 @@ def get_user_id():
         return None
     return user_id
 
-# ---------- Helper for unified contact upsert ----------
 def upsert_contact(owner, contact_id, nickname, pinned=0):
     conn = get_db()
     cur = conn.cursor()
@@ -228,7 +243,7 @@ def get_private_messages(contact_id):
     cur = conn.cursor()
     if ON_RENDER:
         cur.execute("""
-            SELECT sender_id, recipient_id, content, file_url, timestamp
+            SELECT id, sender_id, recipient_id, content, file_url, timestamp
             FROM messages
             WHERE (sender_id=%s AND recipient_id=%s)
                OR (sender_id=%s AND recipient_id=%s)
@@ -236,24 +251,126 @@ def get_private_messages(contact_id):
         """, (user, contact_id, contact_id, user))
     else:
         cur.execute("""
-            SELECT sender_id, recipient_id, content, file_url, timestamp
+            SELECT id, sender_id, recipient_id, content, file_url, timestamp
             FROM messages
             WHERE (sender_id=? AND recipient_id=?)
                OR (sender_id=? AND recipient_id=?)
             ORDER BY timestamp
         """, (user, contact_id, contact_id, user))
     rows = cur.fetchall()
+    # Fetch reactions for these messages
+    msg_ids = [r[0] for r in rows]
+    reactions = {}
+    if msg_ids:
+        placeholders = ','.join(['%s'] * len(msg_ids)) if ON_RENDER else ','.join(['?'] * len(msg_ids))
+        cur.execute(f"SELECT message_id, user_id, emoji FROM reactions WHERE message_id IN ({placeholders})", msg_ids)
+        for r in cur.fetchall():
+            mid = r[0]
+            if mid not in reactions:
+                reactions[mid] = []
+            reactions[mid].append({"user": r[1], "emoji": r[2]})
     cur.close()
     conn.close()
     result = []
     for row in rows:
         if ON_RENDER:
-            result.append([row['sender_id'], row['recipient_id'], row['content'], row['file_url'], row['timestamp']])
+            msg_id = row['id']
+            result.append({
+                "id": msg_id,
+                "sender": row['sender_id'],
+                "recipient": row['recipient_id'],
+                "content": row['content'],
+                "file_url": row['file_url'],
+                "timestamp": row['timestamp'],
+                "reactions": reactions.get(msg_id, [])
+            })
         else:
-            result.append([row['sender_id'], row['recipient_id'], row['content'], row['file_url'], row['timestamp']])
+            msg_id = row[0]
+            result.append({
+                "id": msg_id,
+                "sender": row[1],
+                "recipient": row[2],
+                "content": row[3],
+                "file_url": row[4],
+                "timestamp": row[5],
+                "reactions": reactions.get(msg_id, [])
+            })
     return jsonify(result)
 
-# Contacts (unchanged from before)
+# Delete a message
+@app.route('/api/messages/<int:msg_id>', methods=['DELETE'])
+def delete_message(msg_id):
+    user = get_user_id()
+    if not user:
+        return jsonify({"error": "Not authenticated"}), 401
+    conn = get_db()
+    cur = conn.cursor()
+    # Only allow deletion if user is sender or recipient
+    if ON_RENDER:
+        cur.execute("DELETE FROM messages WHERE id=%s AND (sender_id=%s OR recipient_id=%s)", (msg_id, user, user))
+    else:
+        cur.execute("DELETE FROM messages WHERE id=? AND (sender_id=? OR recipient_id=?)", (msg_id, user, user))
+    deleted = cur.rowcount
+    conn.commit()
+    cur.close()
+    conn.close()
+    if deleted:
+        return jsonify({"status": "deleted"})
+    return jsonify({"error": "Message not found or not authorized"}), 404
+
+# Reactions
+@app.route('/api/messages/<int:msg_id>/react', methods=['POST'])
+def add_reaction(msg_id):
+    user = get_user_id()
+    if not user:
+        return jsonify({"error": "Not authenticated"}), 401
+    data = request.json
+    emoji = data.get('emoji')
+    if not emoji:
+        return jsonify({"error": "Missing emoji"}), 400
+    conn = get_db()
+    cur = conn.cursor()
+    try:
+        if ON_RENDER:
+            cur.execute(
+                "INSERT INTO reactions (message_id, user_id, emoji) VALUES (%s, %s, %s) ON CONFLICT (message_id, user_id, emoji) DO NOTHING",
+                (msg_id, user, emoji)
+            )
+        else:
+            cur.execute(
+                "INSERT OR IGNORE INTO reactions (message_id, user_id, emoji) VALUES (?,?,?)",
+                (msg_id, user, emoji)
+            )
+        conn.commit()
+    except Exception as e:
+        conn.rollback()
+        return jsonify({"error": str(e)}), 500
+    finally:
+        cur.close()
+        conn.close()
+    return jsonify({"status": "added"})
+
+@app.route('/api/messages/<int:msg_id>/react', methods=['DELETE'])
+def remove_reaction(msg_id):
+    user = get_user_id()
+    if not user:
+        return jsonify({"error": "Not authenticated"}), 401
+    data = request.json
+    emoji = data.get('emoji')
+    if not emoji:
+        return jsonify({"error": "Missing emoji"}), 400
+    conn = get_db()
+    cur = conn.cursor()
+    if ON_RENDER:
+        cur.execute("DELETE FROM reactions WHERE message_id=%s AND user_id=%s AND emoji=%s", (msg_id, user, emoji))
+    else:
+        cur.execute("DELETE FROM reactions WHERE message_id=? AND user_id=? AND emoji=?", (msg_id, user, emoji))
+    conn.commit()
+    cur.close()
+    conn.close()
+    return jsonify({"status": "removed"})
+
+# Contacts (unchanged from before, but ensure nickname update works)
 @app.route('/api/contacts', methods=['GET'])
 def list_contacts():
     user = get_user_id()
@@ -273,7 +390,7 @@ def list_contacts():
         if ON_RENDER:
             result.append({"id": row['contact_id'], "nickname": row['nickname'], "pinned": row['pinned']})
         else:
-            result.append({"id": row['contact_id'], "nickname": row['nickname'], "pinned": row['pinned']})
+            result.append({"id": row[0], "nickname": row[1], "pinned": row[2]})
     return jsonify(result)
 
 @app.route('/api/contacts', methods=['POST'])
@@ -288,6 +405,17 @@ def add_contact_route():
         return jsonify({"error": "Missing contact_id"}), 400
     upsert_contact(user, contact_id, nickname, pinned=0)
     return jsonify({"status": "added"})
+
+@app.route('/api/contacts/<contact_id>', methods=['PUT'])
+def update_contact_route(contact_id):
+    user = get_user_id()
+    if not user:
+        return jsonify({"error": "Not authenticated"}), 401
+    data = request.json
+    nickname = data.get('nickname')
+    pinned = data.get('pinned')
+    upsert_contact(user, contact_id, nickname, pinned if pinned is not None else 0)
+    return jsonify({"status": "updated"})
 
 @app.route('/api/contacts/<contact_id>', methods=['DELETE'])
 def delete_contact_route(contact_id):
@@ -389,24 +517,52 @@ def get_group_messages_route(group_id):
     cur = conn.cursor()
     if ON_RENDER:
         cur.execute("""
-            SELECT sender_id, content, file_url, timestamp
+            SELECT id, sender_id, content, file_url, timestamp
             FROM group_messages
             WHERE group_id=%s
             ORDER BY timestamp
         """, (group_id,))
     else:
         cur.execute("""
-            SELECT sender_id, content, file_url, timestamp
+            SELECT id, sender_id, content, file_url, timestamp
             FROM group_messages
             WHERE group_id=?
             ORDER BY timestamp
         """, (group_id,))
     rows = cur.fetchall()
+    # Fetch reactions for group messages (same pattern as private)
+    msg_ids = [r[0] for r in rows]
+    reactions = {}
+    if msg_ids:
+        placeholders = ','.join(['%s'] * len(msg_ids)) if ON_RENDER else ','.join(['?'] * len(msg_ids))
+        cur.execute(f"SELECT message_id, user_id, emoji FROM reactions WHERE message_id IN ({placeholders})", msg_ids)
+        for r in cur.fetchall():
+            mid = r[0]
+            if mid not in reactions:
+                reactions[mid] = []
+            reactions[mid].append({"user": r[1], "emoji": r[2]})
     cur.close()
     conn.close()
     result = []
-    for r in rows:
-        result.append({"sender": r[0], "content": r[1], "file_url": r[2], "time": r[3]})
+    for row in rows:
+        if ON_RENDER:
+            result.append({
+                "id": row['id'],
+                "sender": row['sender_id'],
+                "content": row['content'],
+                "file_url": row['file_url'],
+                "time": row['timestamp'],
+                "reactions": reactions.get(row['id'], [])
+            })
+        else:
+            result.append({
+                "id": row[0],
+                "sender": row[1],
+                "content": row[2],
+                "file_url": row[3],
+                "time": row[4],
+                "reactions": reactions.get(row[0], [])
+            })
     return jsonify(result)
 
 @app.route('/api/groups/<group_id>/send', methods=['POST'])
@@ -437,6 +593,63 @@ def send_group_message_route(group_id):
     cur.close()
     conn.close()
     return jsonify({"status": "sent", "msg_id": msg_id})
+
+# Delete group message
+@app.route('/api/groups/messages/<int:msg_id>', methods=['DELETE'])
+def delete_group_message(msg_id):
+    user = get_user_id()
+    if not user:
+        return jsonify({"error": "Not authenticated"}), 401
+    conn = get_db()
+    cur = conn.cursor()
+    if ON_RENDER:
+        cur.execute("DELETE FROM group_messages WHERE id=%s AND sender_id=%s", (msg_id, user))
+    else:
+        cur.execute("DELETE FROM group_messages WHERE id=? AND sender_id=?", (msg_id, user))
+    deleted = cur.rowcount
+    conn.commit()
+    cur.close()
+    conn.close()
+    if deleted:
+        return jsonify({"status": "deleted"})
+    return jsonify({"error": "Message not found or not authorized"}), 404
+
+# Add group member
+@app.route('/api/groups/<group_id>/members', methods=['POST'])
+def add_member_route(group_id):
+    user = get_user_id()
+    if not user:
+        return jsonify({"error": "Not authenticated"}), 401
+    data = request.json
+    member_id = data.get('user_id')
+    if not member_id:
+        return jsonify({"error": "Missing user_id"}), 400
+    conn = get_db()
+    cur = conn.cursor()
+    if ON_RENDER:
+        cur.execute("INSERT INTO group_members (group_id, user_id) VALUES (%s, %s) ON CONFLICT DO NOTHING", (group_id, member_id))
+    else:
+        cur.execute("INSERT OR IGNORE INTO group_members (group_id, user_id) VALUES (?,?)", (group_id, member_id))
+    conn.commit()
+    cur.close()
+    conn.close()
+    return jsonify({"status": "added"})
+
+@app.route('/api/groups/<group_id>/members/<member_id>', methods=['DELETE'])
+def remove_member_route(group_id, member_id):
+    user = get_user_id()
+    if not user:
+        return jsonify({"error": "Not authenticated"}), 401
+    conn = get_db()
+    cur = conn.cursor()
+    if ON_RENDER:
+        cur.execute("DELETE FROM group_members WHERE group_id=%s AND user_id=%s", (group_id, member_id))
+    else:
+        cur.execute("DELETE FROM group_members WHERE group_id=? AND user_id=?", (group_id, member_id))
+    conn.commit()
+    cur.close()
+    conn.close()
+    return jsonify({"status": "removed"})
 
 # File upload (general)
 @app.route('/api/upload', methods=['POST'])
@@ -479,7 +692,6 @@ def upload_avatar():
         filepath = os.path.join(app.config['AVATAR_FOLDER'], filename)
         file.save(filepath)
         avatar_url = f"/avatars/{filename}"
-        # Store in database
         conn = get_db()
         cur = conn.cursor()
         if ON_RENDER:
