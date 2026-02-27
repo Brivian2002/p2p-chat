@@ -661,12 +661,12 @@
                 <div class="settings-item">
                     <label id="themeLabel">Theme</label>
                     <div class="theme-buttons" style="display:flex; gap:8px; flex-wrap:wrap; margin-top:10px;">
-                        <div class="theme-btn dark" data-theme="dark" onclick="setTheme('dark')"></div>
-                        <div class="theme-btn light" data-theme="light" onclick="setTheme('light')"></div>
-                        <div class="theme-btn blue" data-theme="blue" onclick="setTheme('blue')"></div>
-                        <div class="theme-btn yellow" data-theme="yellow" onclick="setTheme('yellow')"></div>
-                        <div class="theme-btn green" data-theme="green" onclick="setTheme('green')"></div>
-                        <div class="theme-btn blue-black" data-theme="blue-black" onclick="setTheme('blue-black')"></div>
+                        <div class="theme-btn dark" onclick="setTheme('dark')"></div>
+                        <div class="theme-btn light" onclick="setTheme('light')"></div>
+                        <div class="theme-btn blue" onclick="setTheme('blue')"></div>
+                        <div class="theme-btn yellow" onclick="setTheme('yellow')"></div>
+                        <div class="theme-btn green" onclick="setTheme('green')"></div>
+                        <div class="theme-btn blue-black" onclick="setTheme('blue-black')"></div>
                     </div>
                 </div>
                 <div class="settings-item">
@@ -689,18 +689,42 @@
         <div id="infoModal" class="modal">
             <div class="modal-content">
                 <h3 id="infoTitle">How to Use</h3>
-                <ul style="padding-left:20px;" id="infoList">
-                    <li><strong>Your ID</strong> – Tap to copy. It stays the same on this device.</li>
-                    <li><strong>Add Contact</strong> – Tap + → Add Contact → enter their ID (optional nickname).</li>
-                    <li><strong>Start Chat</strong> – Tap a contact from the list.</li>
-                    <li><strong>Send Files</strong> – Click paperclip, choose any file (images/videos/audio/documents).</li>
-                    <li><strong>Voice Note</strong> – Click microphone to record, click again to stop and send.</li>
-                    <li><strong>React</strong> – Click the reaction button on any message to add emoji.</li>
-                    <li><strong>Delete Message</strong> – Long‑press (or right‑click) a message to delete it.</li>
-                    <li><strong>Edit Contact</strong> – Three‑dot menu on a contact → Edit.</li>
-                    <li><strong>Profile Photo</strong> – Click avatar to upload; others will see it.</li>
-                    <li><strong>Settings</strong> – Cog icon to change theme, online status, language.</li>
-                </ul>
+                <div style="display: flex; align-items: center; margin-bottom: 15px;">
+                    <i class="fas fa-id-card" style="font-size: 24px; margin-right: 15px; color: var(--accent);"></i>
+                    <div><strong>Your ID</strong> – Tap to copy. It stays the same on this device.</div>
+                </div>
+                <div style="display: flex; align-items: center; margin-bottom: 15px;">
+                    <i class="fas fa-user-plus" style="font-size: 24px; margin-right: 15px; color: var(--accent);"></i>
+                    <div><strong>Add Contact</strong> – Tap + → Add Contact → enter their ID (optional nickname).</div>
+                </div>
+                <div style="display: flex; align-items: center; margin-bottom: 15px;">
+                    <i class="fas fa-comment" style="font-size: 24px; margin-right: 15px; color: var(--accent);"></i>
+                    <div><strong>Start Chat</strong> – Tap a contact from the list.</div>
+                </div>
+                <div style="display: flex; align-items: center; margin-bottom: 15px;">
+                    <i class="fas fa-paperclip" style="font-size: 24px; margin-right: 15px; color: var(--accent);"></i>
+                    <div><strong>Send Files</strong> – Click paperclip, choose any file (images/videos/audio/documents).</div>
+                </div>
+                <div style="display: flex; align-items: center; margin-bottom: 15px;">
+                    <i class="fas fa-microphone" style="font-size: 24px; margin-right: 15px; color: var(--accent);"></i>
+                    <div><strong>Voice Note</strong> – Click microphone to record, click again to stop and send.</div>
+                </div>
+                <div style="display: flex; align-items: center; margin-bottom: 15px;">
+                    <i class="far fa-smile" style="font-size: 24px; margin-right: 15px; color: var(--accent);"></i>
+                    <div><strong>React</strong> – Click the reaction button on any message to add emoji.</div>
+                </div>
+                <div style="display: flex; align-items: center; margin-bottom: 15px;">
+                    <i class="fas fa-trash-alt" style="font-size: 24px; margin-right: 15px; color: var(--accent);"></i>
+                    <div><strong>Delete Message</strong> – Long‑press (or right‑click) a message to delete it.</div>
+                </div>
+                <div style="display: flex; align-items: center; margin-bottom: 15px;">
+                    <i class="fas fa-edit" style="font-size: 24px; margin-right: 15px; color: var(--accent);"></i>
+                    <div><strong>Edit Contact</strong> – Three‑dot menu on a contact → Edit.</div>
+                </div>
+                <div style="display: flex; align-items: center; margin-bottom: 15px;">
+                    <i class="fas fa-cog" style="font-size: 24px; margin-right: 15px; color: var(--accent);"></i>
+                    <div><strong>Settings</strong> – Cog icon to change theme, online status, language.</div>
+                </div>
                 <button class="btn-primary" onclick="closeModal('infoModal')" id="infoGotIt">Got it</button>
             </div>
         </div>
@@ -729,7 +753,7 @@
         </div>
     </div>
 
-    <!-- Other modals (add contact, create group, edit contact, add options) - unchanged but will be updated by language later -->
+    <!-- Other modals -->
     <div id="reactionPopup" class="reaction-popup">
         <span>😊</span><span>😂</span><span>❤️</span><span>👍</span><span>😢</span>
     </div>
@@ -771,7 +795,9 @@
             <h3 id="createGroupTitle">Create Group</h3>
             <input type="text" id="groupNameInput" placeholder="Group Name">
             <p style="margin:10px 0;" id="selectMembersLabel">Select members from contacts:</p>
-            <div id="groupMembersList" style="max-height:150px; overflow-y:auto;"></div>
+            <select id="groupMembersSelect" multiple size="5" style="width:100%; background:var(--bg-primary); color:var(--text-primary); border:1px solid var(--border-color); border-radius:10px; padding:8px;">
+                <!-- Options will be populated dynamically -->
+            </select>
             <div class="btn-group">
                 <button class="btn-primary" id="createGroupBtn" onclick="createGroup()">Create</button>
                 <button class="btn-secondary" id="cancelGroupBtn" onclick="closeModal('createGroupModal')">Cancel</button>
@@ -820,7 +846,6 @@
                 edit: "Edit",
                 pin: "Pin",
                 unpin: "Unpin",
-                // Add more as needed
             },
             es: {
                 settingsTitle: "Ajustes",
@@ -1004,11 +1029,7 @@
             document.getElementById('cancelEditBtn').innerText = t.cancelEditBtn;
             document.getElementById('infoTitle').innerText = t.infoTitle;
             document.getElementById('infoGotIt').innerText = t.infoGotIt;
-            // Update online status display
             onlineStatus.innerText = onlineSwitch.checked ? t.online : t.offline;
-            // Note: we might need to update pin badges etc. but they are dynamically generated; we'll handle in renderChats later.
-            // For simplicity, we'll reload chats after language change to update static text? But pin badges are generated per chat.
-            // We'll handle by re-rendering chats when language changes.
             loadChats(); // re-render chats with new language strings
         }
 
@@ -1149,7 +1170,20 @@
                 ];
                 combined.sort((a,b) => (b.pinned - a.pinned) || a.name.localeCompare(b.name));
                 renderChats(combined);
+                // Update group members dropdown
+                populateGroupMembersSelect();
             }).catch(() => showToast('Failed to load chats'));
+        }
+
+        function populateGroupMembersSelect() {
+            const select = document.getElementById('groupMembersSelect');
+            select.innerHTML = '';
+            contacts.forEach(c => {
+                const option = document.createElement('option');
+                option.value = c.id;
+                option.text = c.nickname || c.id;
+                select.appendChild(option);
+            });
         }
 
         function renderChats(chats) {
@@ -1412,7 +1446,7 @@
             }
         });
 
-        // ---------- Voice note recording (fixed) ----------
+        // ---------- Voice note recording ----------
         let mediaRecorder;
         let audioChunks = [];
         let recording = false;
@@ -1579,18 +1613,12 @@
         };
         window.showCreateGroupModal = () => {
             closeModal('addOptionsModal');
-            fetchWithAuth('/api/contacts').then(res => res.json()).then(cs => {
-                const container = document.getElementById('groupMembersList');
-                container.innerHTML = '';
-                cs.forEach(c => {
-                    container.innerHTML += `<label style="display:block; margin:5px 0; color:var(--text-primary);"><input type="checkbox" value="${c.id}"> ${escapeHtml(c.nickname || c.id)}</label>`;
-                });
-            });
             document.getElementById('createGroupModal').style.display = 'flex';
         };
         window.createGroup = () => {
             const name = document.getElementById('groupNameInput').value.trim();
-            const members = Array.from(document.querySelectorAll('#groupMembersList input:checked')).map(cb => cb.value);
+            const select = document.getElementById('groupMembersSelect');
+            const members = Array.from(select.selectedOptions).map(opt => opt.value);
             if (!name) return showToast('Enter group name');
             fetchWithAuth('/api/groups', {
                 method: 'POST',
