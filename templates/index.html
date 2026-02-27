@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-    <title>P2P Chat · Dark</title>
+    <title>P2P Chat · Pro</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         * {
@@ -13,54 +13,96 @@
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
         }
         body {
-            background: #111827;
             height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
             padding: 0;
-            transition: background 0.3s;
+            transition: background 0.3s, color 0.3s;
         }
+        /* Theme variables */
+        body.theme-dark {
+            --bg-primary: #1f2937;
+            --bg-secondary: #111827;
+            --bg-tertiary: #2d3a4e;
+            --border-color: #4b5563;
+            --text-primary: #e5e7eb;
+            --text-secondary: #9ca3af;
+            --accent: #10b981;
+            --accent-hover: #ff69b4;
+            --pin-badge: #ffd700;
+        }
+        body.theme-light {
+            --bg-primary: #ffffff;
+            --bg-secondary: #f3f4f6;
+            --bg-tertiary: #e5e7eb;
+            --border-color: #d1d5db;
+            --text-primary: #111827;
+            --text-secondary: #4b5563;
+            --accent: #10b981;
+            --accent-hover: #ff69b4;
+            --pin-badge: #f59e0b;
+        }
+        body.theme-blue {
+            --bg-primary: #1e3a8a;
+            --bg-secondary: #172554;
+            --bg-tertiary: #1e3a8a;
+            --border-color: #3b82f6;
+            --text-primary: #ffffff;
+            --text-secondary: #bfdbfe;
+            --accent: #fbbf24;
+            --accent-hover: #f59e0b;
+            --pin-badge: #ffd700;
+        }
+        body.theme-yellow {
+            --bg-primary: #fbbf24;
+            --bg-secondary: #f59e0b;
+            --bg-tertiary: #fcd34d;
+            --border-color: #b45309;
+            --text-primary: #111827;
+            --text-secondary: #4b5563;
+            --accent: #1f2937;
+            --accent-hover: #374151;
+            --pin-badge: #1f2937;
+        }
+        body.theme-green {
+            --bg-primary: #10b981;
+            --bg-secondary: #047857;
+            --bg-tertiary: #34d399;
+            --border-color: #065f46;
+            --text-primary: #111827;
+            --text-secondary: #1f2937;
+            --accent: #fbbf24;
+            --accent-hover: #f59e0b;
+            --pin-badge: #1f2937;
+        }
+        body.theme-blue-black {
+            --bg-primary: #0f172a;
+            --bg-secondary: #020617;
+            --bg-tertiary: #1e293b;
+            --border-color: #334155;
+            --text-primary: #e2e8f0;
+            --text-secondary: #94a3b8;
+            --accent: #10b981;
+            --accent-hover: #ff69b4;
+            --pin-badge: #ffd700;
+        }
+
         .app {
             width: 100%;
             max-width: 600px;
             height: 100%;
-            background: #1f2937;
+            background: var(--bg-primary);
             display: flex;
             flex-direction: column;
             overflow: hidden;
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
             transition: background 0.3s, color 0.3s;
         }
-        /* Theme classes */
-        .theme-dark {
-            background: #1f2937;
-            color: #e5e7eb;
-        }
-        .theme-light {
-            background: #ffffff;
-            color: #111827;
-        }
-        .theme-blue {
-            background: #1e3a8a;
-            color: #ffffff;
-        }
-        .theme-yellow {
-            background: #fbbf24;
-            color: #111827;
-        }
-        .theme-green {
-            background: #10b981;
-            color: #111827;
-        }
-        .theme-blue-black {
-            background: #0f172a;
-            color: #e2e8f0;
-        }
         .top-bar {
-            background: #111827;
+            background: var(--bg-secondary);
             padding: 12px 16px;
-            border-bottom: 1px solid #2d3a4e;
+            border-bottom: 1px solid var(--border-color);
             display: flex;
             align-items: center;
             gap: 10px;
@@ -70,20 +112,20 @@
             width: 44px;
             height: 44px;
             border-radius: 14px;
-            background: #10b981;
+            background: var(--accent);
             display: flex;
             align-items: center;
             justify-content: center;
-            color: white;
+            color: var(--text-primary);
             font-size: 22px;
             cursor: pointer;
             overflow: hidden;
             position: relative;
             flex-shrink: 0;
-            border: 2px solid #ffd700;
+            border: 2px solid var(--pin-badge);
         }
         .profile-photo:hover {
-            border-color: #ff69b4;
+            border-color: var(--accent-hover);
         }
         .profile-photo img {
             width: 100%;
@@ -98,12 +140,12 @@
             cursor: pointer;
         }
         .user-id-badge {
-            background: #2d3a4e;
+            background: var(--bg-tertiary);
             padding: 8px 16px;
             border-radius: 40px;
             font-size: 14px;
             font-weight: 500;
-            color: #e5e7eb;
+            color: var(--text-primary);
             display: flex;
             align-items: center;
             gap: 8px;
@@ -112,10 +154,10 @@
             overflow: hidden;
             text-overflow: ellipsis;
             max-width: 180px;
-            border: 1px solid #10b981;
+            border: 1px solid var(--accent);
         }
         .user-id-badge:hover {
-            border-color: #ff69b4;
+            border-color: var(--accent-hover);
         }
         .spacer {
             flex: 1;
@@ -124,7 +166,7 @@
             background: none;
             border: none;
             font-size: 22px;
-            color: #e5e7eb;
+            color: var(--text-primary);
             cursor: pointer;
             width: 44px;
             height: 44px;
@@ -135,22 +177,21 @@
             transition: background 0.2s;
         }
         .icon-btn:hover {
-            background: #2d3a4e;
-            color: #10b981;
+            background: var(--bg-tertiary);
+            color: var(--accent);
         }
-        /* Settings panel (slide-out) */
         .settings-panel {
             position: absolute;
             top: 0;
             right: -300px;
             width: 280px;
             height: 100%;
-            background: #2d3a4e;
-            border-left: 1px solid #4b5563;
+            background: var(--bg-tertiary);
+            border-left: 1px solid var(--border-color);
             transition: right 0.3s ease;
             z-index: 200;
             padding: 20px;
-            color: #e5e7eb;
+            color: var(--text-primary);
             overflow-y: auto;
         }
         .settings-panel.open {
@@ -159,6 +200,7 @@
         .settings-panel h3 {
             margin-bottom: 20px;
             font-size: 20px;
+            color: var(--text-primary);
         }
         .settings-item {
             margin-bottom: 20px;
@@ -167,6 +209,7 @@
             display: block;
             margin-bottom: 8px;
             font-weight: 500;
+            color: var(--text-primary);
         }
         .switch {
             position: relative;
@@ -186,7 +229,7 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background-color: #4b5563;
+            background-color: var(--border-color);
             border-radius: 34px;
             transition: .2s;
         }
@@ -202,7 +245,7 @@
             transition: .2s;
         }
         input:checked + .slider {
-            background-color: #10b981;
+            background-color: var(--accent);
         }
         input:checked + .slider:before {
             transform: translateX(24px);
@@ -230,21 +273,21 @@
         .theme-btn.green { background: #10b981; border-color: #111827; }
         .theme-btn.blue-black { background: #0f172a; border-color: #e2e8f0; }
         .theme-btn.active {
-            border-color: #ff69b4;
+            border-color: var(--accent-hover);
             transform: scale(1.1);
         }
         .language-select {
             width: 100%;
             padding: 8px;
             border-radius: 20px;
-            background: #1f2937;
-            color: #e5e7eb;
-            border: 1px solid #4b5563;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
         }
         .panel {
             flex: 1;
             overflow-y: auto;
-            background: #1f2937;
+            background: var(--bg-primary);
             padding: 16px;
         }
         .chats-header {
@@ -255,11 +298,11 @@
         }
         .chats-header h2 {
             font-size: 24px;
-            color: #e5e7eb;
+            color: var(--text-primary);
         }
         .fab {
-            background: #10b981;
-            color: #111827;
+            background: var(--accent);
+            color: var(--text-primary);
             width: 56px;
             height: 56px;
             border-radius: 50%;
@@ -271,39 +314,39 @@
         }
         .fab:hover {
             transform: scale(1.05);
-            background: #ff69b4;
+            background: var(--accent-hover);
             color: white;
         }
         .chat-item {
-            background: #2d3a4e;
+            background: var(--bg-tertiary);
             border-radius: 24px;
             padding: 16px;
             margin-bottom: 12px;
             display: flex;
             align-items: center;
             gap: 14px;
-            border: 1px solid #4b5563;
+            border: 1px solid var(--border-color);
             cursor: pointer;
             position: relative;
             transition: border 0.2s;
         }
         .chat-item:hover {
-            border-color: #10b981;
+            border-color: var(--accent);
         }
         .avatar {
             width: 56px;
             height: 56px;
             border-radius: 20px;
-            background: #10b981;
+            background: var(--accent);
             display: flex;
             align-items: center;
             justify-content: center;
-            color: white;
+            color: var(--text-primary);
             font-size: 22px;
             font-weight: 600;
             flex-shrink: 0;
             overflow: hidden;
-            border: 2px solid #ffd700;
+            border: 2px solid var(--pin-badge);
         }
         .avatar img {
             width: 100%;
@@ -316,22 +359,22 @@
         }
         .chat-name {
             font-weight: 700;
-            color: #e5e7eb;
+            color: var(--text-primary);
             display: flex;
             align-items: center;
             gap: 6px;
             flex-wrap: wrap;
         }
         .pin-badge {
-            background: #4b5563;
+            background: var(--border-color);
             padding: 2px 8px;
             border-radius: 40px;
             font-size: 10px;
-            color: #ffd700;
+            color: var(--pin-badge);
         }
         .chat-last {
             font-size: 13px;
-            color: #9ca3af;
+            color: var(--text-secondary);
             margin-top: 4px;
             white-space: nowrap;
             overflow: hidden;
@@ -341,23 +384,23 @@
             background: none;
             border: none;
             font-size: 20px;
-            color: #9ca3af;
+            color: var(--text-secondary);
             padding: 8px;
             border-radius: 50%;
             cursor: pointer;
         }
         .dots:hover {
-            background: #4b5563;
+            background: var(--border-color);
         }
         .menu {
             display: none;
             position: absolute;
             right: 16px;
             top: 56px;
-            background: #2d3a4e;
+            background: var(--bg-tertiary);
             border-radius: 16px;
             box-shadow: 0 10px 20px rgba(0,0,0,0.5);
-            border: 1px solid #4b5563;
+            border: 1px solid var(--border-color);
             z-index: 20;
             min-width: 160px;
         }
@@ -372,33 +415,33 @@
             align-items: center;
             gap: 10px;
             cursor: pointer;
-            color: #e5e7eb;
+            color: var(--text-primary);
         }
         .menu button:hover {
-            background: #4b5563;
+            background: var(--border-color);
         }
         .chat-area {
             display: none;
             flex-direction: column;
             height: 100%;
-            background: #1f2937;
+            background: var(--bg-primary);
         }
         .chat-header {
-            background: #111827;
+            background: var(--bg-secondary);
             padding: 12px 16px;
-            border-bottom: 1px solid #2d3a4e;
+            border-bottom: 1px solid var(--border-color);
             display: flex;
             align-items: center;
             gap: 12px;
         }
         .back-btn {
             font-size: 24px;
-            color: #e5e7eb;
+            color: var(--text-primary);
             cursor: pointer;
         }
         .chat-title {
             font-weight: 600;
-            color: #e5e7eb;
+            color: var(--text-primary);
         }
         .messages {
             flex: 1;
@@ -426,24 +469,24 @@
             border-radius: 20px;
             word-wrap: break-word;
             font-size: 14px;
-            background: #2d3a4e;
-            color: #e5e7eb;
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
             transition: background 0.2s;
         }
         .sent .message-bubble {
-            background: #10b981;
-            color: #111827;
+            background: var(--accent);
+            color: var(--text-primary);
             border-bottom-right-radius: 4px;
         }
         .received .message-bubble {
-            background: #2d3a4e;
+            background: var(--bg-tertiary);
             border-bottom-left-radius: 4px;
-            border: 1px solid #4b5563;
+            border: 1px solid var(--border-color);
         }
         .message-sender {
             font-size: 11px;
             font-weight: 600;
-            color: #9ca3af;
+            color: var(--text-secondary);
             margin-bottom: 2px;
             margin-left: 8px;
         }
@@ -452,7 +495,7 @@
             opacity: 0.7;
             margin-top: 4px;
             text-align: right;
-            color: #9ca3af;
+            color: var(--text-secondary);
         }
         .reaction-bar {
             display: flex;
@@ -462,22 +505,23 @@
             flex-wrap: wrap;
         }
         .reaction {
-            background: #4b5563;
+            background: var(--border-color);
             border-radius: 40px;
             padding: 2px 8px;
             font-size: 12px;
             cursor: pointer;
             user-select: none;
-            border: 1px solid #10b981;
+            border: 1px solid var(--accent);
+            color: var(--text-primary);
         }
         .reaction:hover {
-            border-color: #ff69b4;
+            border-color: var(--accent-hover);
         }
         .file-attachment {
             display: flex;
             align-items: center;
             gap: 8px;
-            background: #4b5563;
+            background: var(--border-color);
             border-radius: 12px;
             padding: 6px 10px;
             margin-top: 4px;
@@ -492,9 +536,9 @@
             max-width: 200px;
         }
         .input-area {
-            background: #111827;
+            background: var(--bg-secondary);
             padding: 8px 12px;
-            border-top: 1px solid #2d3a4e;
+            border-top: 1px solid var(--border-color);
             display: flex;
             gap: 6px;
             align-items: center;
@@ -504,36 +548,39 @@
             flex: 1 1 150px;
             min-width: 120px;
             padding: 10px 12px;
-            border: 1px solid #4b5563;
+            border: 1px solid var(--border-color);
             border-radius: 40px;
             outline: none;
-            background: #2d3a4e;
-            color: #e5e7eb;
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
             font-size: 14px;
             height: 42px;
         }
+        .input-area input::placeholder {
+            color: var(--text-secondary);
+        }
         .input-area button {
-            background: #2d3a4e;
+            background: var(--bg-tertiary);
             border: none;
             width: 42px;
             height: 42px;
             border-radius: 50%;
             font-size: 18px;
-            color: #e5e7eb;
+            color: var(--text-primary);
             cursor: pointer;
-            border: 1px solid #4b5563;
+            border: 1px solid var(--border-color);
             flex-shrink: 0;
             display: flex;
             align-items: center;
             justify-content: center;
         }
         .input-area button:hover {
-            background: #4b5563;
-            border-color: #10b981;
+            background: var(--border-color);
+            border-color: var(--accent);
         }
         .send-btn {
-            background: #10b981 !important;
-            color: #111827 !important;
+            background: var(--accent) !important;
+            color: var(--text-primary) !important;
             width: auto !important;
             padding: 0 18px !important;
             border-radius: 40px !important;
@@ -544,18 +591,18 @@
             line-height: 42px;
         }
         .send-btn:hover {
-            background: #ff69b4 !important;
+            background: var(--accent-hover) !important;
             color: white !important;
         }
         .reaction-popup {
             display: none;
             position: absolute;
-            background: #2d3a4e;
+            background: var(--bg-tertiary);
             border-radius: 40px;
             box-shadow: 0 20px 30px rgba(0,0,0,0.5);
             padding: 8px 12px;
             z-index: 100;
-            border: 1px solid #4b5563;
+            border: 1px solid var(--border-color);
             gap: 8px;
             bottom: 100%;
             left: 0;
@@ -570,18 +617,18 @@
         }
         .delete-popup {
             position: absolute;
-            background: #2d3a4e;
+            background: var(--bg-tertiary);
             border-radius: 16px;
             padding: 8px 12px;
-            border: 1px solid #ff69b4;
-            color: white;
+            border: 1px solid var(--accent-hover);
+            color: var(--text-primary);
             font-size: 14px;
             cursor: pointer;
             z-index: 200;
             box-shadow: 0 10px 20px rgba(0,0,0,0.5);
         }
         .delete-popup:hover {
-            background: #ff69b4;
+            background: var(--accent-hover);
         }
         .recording {
             background: #ef4444 !important;
@@ -603,31 +650,31 @@
             z-index: 1000;
         }
         .modal-content {
-            background: #2d3a4e;
+            background: var(--bg-tertiary);
             border-radius: 28px;
             padding: 24px;
             width: 90%;
             max-width: 380px;
-            border: 1px solid #4b5563;
+            border: 1px solid var(--border-color);
         }
         .modal-content h3 {
-            color: #e5e7eb;
+            color: var(--text-primary);
             margin-bottom: 16px;
         }
         .modal-content p, .modal-content li {
-            color: #9ca3af;
+            color: var(--text-secondary);
         }
         .modal-content input {
             width: 100%;
             padding: 12px;
-            border: 1px solid #4b5563;
+            border: 1px solid var(--border-color);
             border-radius: 20px;
             margin: 8px 0;
-            background: #1f2937;
-            color: #e5e7eb;
+            background: var(--bg-primary);
+            color: var(--text-primary);
         }
         .modal-content input:focus {
-            border-color: #10b981;
+            border-color: var(--accent);
             outline: none;
         }
         .btn-group {
@@ -636,8 +683,8 @@
             margin-top: 16px;
         }
         .btn-primary {
-            background: #10b981;
-            color: #111827;
+            background: var(--accent);
+            color: var(--text-primary);
             border: none;
             padding: 12px;
             border-radius: 40px;
@@ -646,12 +693,12 @@
             cursor: pointer;
         }
         .btn-primary:hover {
-            background: #ff69b4;
+            background: var(--accent-hover);
             color: white;
         }
         .btn-secondary {
-            background: #4b5563;
-            color: #e5e7eb;
+            background: var(--border-color);
+            color: var(--text-primary);
             border: none;
             padding: 12px;
             border-radius: 40px;
@@ -664,8 +711,8 @@
             bottom: 20px;
             left: 50%;
             transform: translateX(-50%);
-            background: #10b981;
-            color: #111827;
+            background: var(--accent);
+            color: var(--text-primary);
             padding: 8px 16px;
             border-radius: 40px;
             opacity: 0;
@@ -696,6 +743,7 @@
             </div>
             <div class="user-id-badge" id="userIdBadge">
                 <i class="fas fa-id-card"></i> <span id="myId"></span>
+                <span id="onlineIndicator" style="display:inline-block; width:10px; height:10px; border-radius:50%; background:#10b981; margin-left:5px;"></span>
             </div>
             <div class="spacer"></div>
             <button class="icon-btn" id="settingsBtn"><i class="fas fa-cog"></i></button>
@@ -728,10 +776,10 @@
                 <label>App Language</label>
                 <select class="language-select" id="languageSelect">
                     <option value="en">English</option>
-                    <option value="es">Spanish</option>
-                    <option value="fr">French</option>
-                    <option value="de">German</option>
-                    <option value="zh">Chinese</option>
+                    <option value="es">Español</option>
+                    <option value="fr">Français</option>
+                    <option value="de">Deutsch</option>
+                    <option value="zh">中文</option>
                 </select>
             </div>
             <button class="btn-secondary" onclick="closeSettings()">Close</button>
@@ -754,7 +802,7 @@
             <div class="input-area">
                 <input type="text" id="messageInput" placeholder="Type a message...">
                 <button id="voiceBtn"><i class="fas fa-microphone"></i></button>
-                <label for="fileInput" class="icon-btn" style="background:#2d3a4e;"><i class="fas fa-paperclip"></i></label>
+                <label for="fileInput" class="icon-btn" style="background:var(--bg-tertiary);"><i class="fas fa-paperclip"></i></label>
                 <input type="file" id="fileInput" style="display:none" onchange="uploadFile()">
                 <button class="send-btn" id="sendBtn">Send</button>
             </div>
@@ -823,6 +871,7 @@
                 <li><strong>Delete Message</strong> – Long‑press (or right‑click) a message to delete it.</li>
                 <li><strong>Edit Contact</strong> – Three‑dot menu on a contact → Edit.</li>
                 <li><strong>Profile Photo</strong> – Click avatar to upload; others will see it.</li>
+                <li><strong>Settings</strong> – Cog icon to change theme, online status, language.</li>
             </ul>
             <button class="btn-primary" onclick="closeModal('infoModal')">Got it</button>
         </div>
@@ -875,12 +924,15 @@
         // Online status toggle
         const onlineSwitch = document.getElementById('onlineSwitch');
         const onlineStatus = document.getElementById('onlineStatus');
+        const onlineIndicator = document.getElementById('onlineIndicator');
         onlineSwitch.addEventListener('change', () => {
-            onlineStatus.innerText = onlineSwitch.checked ? 'Online' : 'Offline';
+            const isOnline = onlineSwitch.checked;
+            onlineStatus.innerText = isOnline ? 'Online' : 'Offline';
+            onlineIndicator.style.background = isOnline ? '#10b981' : '#ef4444';
             // You can extend this to actually affect presence
         });
 
-        // Theme switching
+        // Theme switching with CSS variables
         window.setTheme = function(theme) {
             // Remove previous theme classes from body
             document.body.className = '';
@@ -888,7 +940,7 @@
             // Highlight active theme button
             document.querySelectorAll('.theme-btn').forEach(btn => btn.classList.remove('active'));
             document.querySelector(`.theme-btn.${theme}`).classList.add('active');
-            // Optionally save to localStorage
+            // Save to localStorage
             localStorage.setItem('p2p_theme', theme);
         };
 
@@ -1092,13 +1144,13 @@
             const name = url.split('/').pop();
             const ext = name.split('.').pop().toLowerCase();
             if (['jpg','jpeg','png','gif','webp'].includes(ext)) {
-                return `<div class="file-attachment"><img src="${url}" class="file-thumb" onclick="window.open('${url}')"><a href="${url}" download style="color:#10b981;">Download</a></div>`;
+                return `<div class="file-attachment"><img src="${url}" class="file-thumb" onclick="window.open('${url}')"><a href="${url}" download style="color:var(--accent);">Download</a></div>`;
             } else if (['mp4','webm','ogg'].includes(ext)) {
-                return `<div class="file-attachment"><video src="${url}" class="video-player" controls style="max-width:180px;"></video><a href="${url}" download style="color:#10b981;">Download</a></div>`;
+                return `<div class="file-attachment"><video src="${url}" class="video-player" controls style="max-width:180px;"></video><a href="${url}" download style="color:var(--accent);">Download</a></div>`;
             } else if (['mp3','m4a','aac','wav','webm'].includes(ext)) {
-                return `<div class="file-attachment"><audio src="${url}" class="audio-player" controls style="max-width:180px;"></audio><a href="${url}" download style="color:#10b981;">Download</a></div>`;
+                return `<div class="file-attachment"><audio src="${url}" class="audio-player" controls style="max-width:180px;"></audio><a href="${url}" download style="color:var(--accent);">Download</a></div>`;
             } else {
-                return `<div class="file-attachment"><i class="fas fa-file"></i> <a href="${url}" download style="color:#10b981;">${name}</a></div>`;
+                return `<div class="file-attachment"><i class="fas fa-file"></i> <a href="${url}" download style="color:var(--accent);">${name}</a></div>`;
             }
         }
 
@@ -1221,7 +1273,7 @@
             }
         });
 
-        // ---------- Voice note recording (audio only) ----------
+        // ---------- Voice note recording (fixed) ----------
         let mediaRecorder;
         let audioChunks = [];
         let recording = false;
@@ -1232,9 +1284,16 @@
                 return;
             }
             if (!recording) {
+                // Check browser support
+                if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                    showToast('Voice recording not supported in this browser');
+                    return;
+                }
                 navigator.mediaDevices.getUserMedia({ audio: true })
                     .then(stream => {
-                        mediaRecorder = new MediaRecorder(stream);
+                        // Use audio/webm for best compatibility
+                        const mimeType = MediaRecorder.isTypeSupported('audio/webm') ? 'audio/webm' : 'audio/mp4';
+                        mediaRecorder = new MediaRecorder(stream, { mimeType });
                         mediaRecorder.start();
                         recording = true;
                         voiceBtn.classList.add('recording');
@@ -1243,9 +1302,9 @@
                             audioChunks.push(event.data);
                         });
                         mediaRecorder.addEventListener('stop', () => {
-                            // Use audio/webm for better compatibility
-                            const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
-                            const file = new File([audioBlob], 'voice.webm', { type: 'audio/webm' });
+                            const audioBlob = new Blob(audioChunks, { type: mimeType });
+                            const ext = mimeType === 'audio/webm' ? 'webm' : 'mp4';
+                            const file = new File([audioBlob], `voice.${ext}`, { type: mimeType });
                             sendVoiceFile(file);
                             stream.getTracks().forEach(track => track.stop());
                         });
@@ -1387,7 +1446,7 @@
                 const container = document.getElementById('groupMembersList');
                 container.innerHTML = '';
                 cs.forEach(c => {
-                    container.innerHTML += `<label style="display:block; margin:5px 0; color:#e5e7eb;"><input type="checkbox" value="${c.id}"> ${escapeHtml(c.nickname || c.id)}</label>`;
+                    container.innerHTML += `<label style="display:block; margin:5px 0; color:var(--text-primary);"><input type="checkbox" value="${c.id}"> ${escapeHtml(c.nickname || c.id)}</label>`;
                 });
             });
             document.getElementById('createGroupModal').style.display = 'flex';
