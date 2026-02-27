@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-    <title>P2P Chat · Pro</title>
+    <title>P2P Chat · Static</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         * {
@@ -18,7 +18,8 @@
             align-items: center;
             justify-content: center;
             padding: 0;
-            transition: background 0.3s, color 0.3s;
+            transition: background 0.3s;
+            background: var(--bg-primary);
         }
         /* Theme variables */
         body.theme-dark {
@@ -97,7 +98,6 @@
             flex-direction: column;
             overflow: hidden;
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-            transition: background 0.3s, color 0.3s;
         }
         .top-bar {
             background: var(--bg-secondary);
@@ -179,110 +179,6 @@
         .icon-btn:hover {
             background: var(--bg-tertiary);
             color: var(--accent);
-        }
-        .settings-panel {
-            position: absolute;
-            top: 0;
-            right: -300px;
-            width: 280px;
-            height: 100%;
-            background: var(--bg-tertiary);
-            border-left: 1px solid var(--border-color);
-            transition: right 0.3s ease;
-            z-index: 200;
-            padding: 20px;
-            color: var(--text-primary);
-            overflow-y: auto;
-        }
-        .settings-panel.open {
-            right: 0;
-        }
-        .settings-panel h3 {
-            margin-bottom: 20px;
-            font-size: 20px;
-            color: var(--text-primary);
-        }
-        .settings-item {
-            margin-bottom: 20px;
-        }
-        .settings-item label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 500;
-            color: var(--text-primary);
-        }
-        .switch {
-            position: relative;
-            display: inline-block;
-            width: 52px;
-            height: 28px;
-        }
-        .switch input {
-            opacity: 0;
-            width: 0;
-            height: 0;
-        }
-        .slider {
-            position: absolute;
-            cursor: pointer;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: var(--border-color);
-            border-radius: 34px;
-            transition: .2s;
-        }
-        .slider:before {
-            position: absolute;
-            content: "";
-            height: 22px;
-            width: 22px;
-            left: 3px;
-            bottom: 3px;
-            background-color: white;
-            border-radius: 50%;
-            transition: .2s;
-        }
-        input:checked + .slider {
-            background-color: var(--accent);
-        }
-        input:checked + .slider:before {
-            transform: translateX(24px);
-        }
-        .theme-buttons {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-        }
-        .theme-btn {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            border: 2px solid transparent;
-            cursor: pointer;
-            transition: transform 0.2s;
-        }
-        .theme-btn:hover {
-            transform: scale(1.1);
-        }
-        .theme-btn.dark { background: #1f2937; border-color: #e5e7eb; }
-        .theme-btn.light { background: #ffffff; border-color: #111827; }
-        .theme-btn.blue { background: #1e3a8a; border-color: #ffffff; }
-        .theme-btn.yellow { background: #fbbf24; border-color: #111827; }
-        .theme-btn.green { background: #10b981; border-color: #111827; }
-        .theme-btn.blue-black { background: #0f172a; border-color: #e2e8f0; }
-        .theme-btn.active {
-            border-color: var(--accent-hover);
-            transform: scale(1.1);
-        }
-        .language-select {
-            width: 100%;
-            padding: 8px;
-            border-radius: 20px;
-            background: var(--bg-primary);
-            color: var(--text-primary);
-            border: 1px solid var(--border-color);
         }
         .panel {
             flex: 1;
@@ -664,7 +560,7 @@
         .modal-content p, .modal-content li {
             color: var(--text-secondary);
         }
-        .modal-content input {
+        .modal-content input, .modal-content select {
             width: 100%;
             padding: 12px;
             border: 1px solid var(--border-color);
@@ -750,44 +646,68 @@
             <button class="icon-btn" id="infoBtn"><i class="fas fa-info-circle"></i></button>
         </div>
 
-        <!-- Settings Panel -->
-        <div class="settings-panel" id="settingsPanel">
-            <h3>Settings</h3>
-            <div class="settings-item">
-                <label>Online Status</label>
-                <label class="switch">
-                    <input type="checkbox" id="onlineSwitch" checked>
-                    <span class="slider"></span>
-                </label>
-                <span id="onlineStatus" style="margin-left: 10px;">Online</span>
-            </div>
-            <div class="settings-item">
-                <label>Theme</label>
-                <div class="theme-buttons">
-                    <div class="theme-btn dark" data-theme="dark" onclick="setTheme('dark')"></div>
-                    <div class="theme-btn light" data-theme="light" onclick="setTheme('light')"></div>
-                    <div class="theme-btn blue" data-theme="blue" onclick="setTheme('blue')"></div>
-                    <div class="theme-btn yellow" data-theme="yellow" onclick="setTheme('yellow')"></div>
-                    <div class="theme-btn green" data-theme="green" onclick="setTheme('green')"></div>
-                    <div class="theme-btn blue-black" data-theme="blue-black" onclick="setTheme('blue-black')"></div>
+        <!-- Settings Modal -->
+        <div id="settingsModal" class="modal">
+            <div class="modal-content">
+                <h3 id="settingsTitle">Settings</h3>
+                <div class="settings-item">
+                    <label id="onlineStatusLabel">Online Status</label>
+                    <label class="switch" style="display:inline-block; margin-left:10px;">
+                        <input type="checkbox" id="onlineSwitch" checked>
+                        <span class="slider"></span>
+                    </label>
+                    <span id="onlineStatus" style="margin-left: 10px;">Online</span>
+                </div>
+                <div class="settings-item">
+                    <label id="themeLabel">Theme</label>
+                    <div class="theme-buttons" style="display:flex; gap:8px; flex-wrap:wrap; margin-top:10px;">
+                        <div class="theme-btn dark" data-theme="dark" onclick="setTheme('dark')"></div>
+                        <div class="theme-btn light" data-theme="light" onclick="setTheme('light')"></div>
+                        <div class="theme-btn blue" data-theme="blue" onclick="setTheme('blue')"></div>
+                        <div class="theme-btn yellow" data-theme="yellow" onclick="setTheme('yellow')"></div>
+                        <div class="theme-btn green" data-theme="green" onclick="setTheme('green')"></div>
+                        <div class="theme-btn blue-black" data-theme="blue-black" onclick="setTheme('blue-black')"></div>
+                    </div>
+                </div>
+                <div class="settings-item">
+                    <label id="languageLabel">App Language</label>
+                    <select id="languageSelect" class="language-select">
+                        <option value="en">English</option>
+                        <option value="es">Español</option>
+                        <option value="fr">Français</option>
+                        <option value="de">Deutsch</option>
+                        <option value="zh">中文</option>
+                    </select>
+                </div>
+                <div class="btn-group">
+                    <button class="btn-primary" id="closeSettingsBtn">Close</button>
                 </div>
             </div>
-            <div class="settings-item">
-                <label>App Language</label>
-                <select class="language-select" id="languageSelect">
-                    <option value="en">English</option>
-                    <option value="es">Español</option>
-                    <option value="fr">Français</option>
-                    <option value="de">Deutsch</option>
-                    <option value="zh">中文</option>
-                </select>
+        </div>
+
+        <!-- Info Modal -->
+        <div id="infoModal" class="modal">
+            <div class="modal-content">
+                <h3 id="infoTitle">How to Use</h3>
+                <ul style="padding-left:20px;" id="infoList">
+                    <li><strong>Your ID</strong> – Tap to copy. It stays the same on this device.</li>
+                    <li><strong>Add Contact</strong> – Tap + → Add Contact → enter their ID (optional nickname).</li>
+                    <li><strong>Start Chat</strong> – Tap a contact from the list.</li>
+                    <li><strong>Send Files</strong> – Click paperclip, choose any file (images/videos/audio/documents).</li>
+                    <li><strong>Voice Note</strong> – Click microphone to record, click again to stop and send.</li>
+                    <li><strong>React</strong> – Click the reaction button on any message to add emoji.</li>
+                    <li><strong>Delete Message</strong> – Long‑press (or right‑click) a message to delete it.</li>
+                    <li><strong>Edit Contact</strong> – Three‑dot menu on a contact → Edit.</li>
+                    <li><strong>Profile Photo</strong> – Click avatar to upload; others will see it.</li>
+                    <li><strong>Settings</strong> – Cog icon to change theme, online status, language.</li>
+                </ul>
+                <button class="btn-primary" onclick="closeModal('infoModal')" id="infoGotIt">Got it</button>
             </div>
-            <button class="btn-secondary" onclick="closeSettings()">Close</button>
         </div>
 
         <div id="chatsPanel" class="panel">
             <div class="chats-header">
-                <h2>Chats</h2>
+                <h2 id="chatsTitle">Chats</h2>
                 <button class="fab" onclick="showAddOptions()"><i class="fas fa-plus"></i></button>
             </div>
             <div id="chatsList"></div>
@@ -809,77 +729,289 @@
         </div>
     </div>
 
+    <!-- Other modals (add contact, create group, edit contact, add options) - unchanged but will be updated by language later -->
     <div id="reactionPopup" class="reaction-popup">
         <span>😊</span><span>😂</span><span>❤️</span><span>👍</span><span>😢</span>
     </div>
 
     <div id="editContactModal" class="modal">
         <div class="modal-content">
-            <h3>Edit Contact</h3>
+            <h3 id="editContactTitle">Edit Contact</h3>
             <input type="text" id="editNickname" placeholder="Nickname">
             <div class="btn-group">
-                <button class="btn-primary" onclick="saveContactEdit()">Save</button>
-                <button class="btn-secondary" onclick="closeModal('editContactModal')">Cancel</button>
+                <button class="btn-primary" id="saveEditBtn" onclick="saveContactEdit()">Save</button>
+                <button class="btn-secondary" id="cancelEditBtn" onclick="closeModal('editContactModal')">Cancel</button>
             </div>
         </div>
     </div>
 
     <div id="addOptionsModal" class="modal">
         <div class="modal-content">
-            <h3>New Chat</h3>
-            <button class="btn-primary" style="margin-bottom:10px;" onclick="showAddContactModal()">Add Contact</button>
-            <button class="btn-secondary" onclick="showCreateGroupModal()">Create Group</button>
-            <button class="btn-secondary" onclick="closeModal('addOptionsModal')">Cancel</button>
+            <h3 id="newChatTitle">New Chat</h3>
+            <button class="btn-primary" style="margin-bottom:10px;" id="addContactOpt" onclick="showAddContactModal()">Add Contact</button>
+            <button class="btn-secondary" id="createGroupOpt" onclick="showCreateGroupModal()">Create Group</button>
+            <button class="btn-secondary" id="cancelOpt" onclick="closeModal('addOptionsModal')">Cancel</button>
         </div>
     </div>
 
     <div id="addContactModal" class="modal">
         <div class="modal-content">
-            <h3>Add Contact</h3>
+            <h3 id="addContactTitle">Add Contact</h3>
             <input type="text" id="contactIdInput" placeholder="User ID">
             <input type="text" id="nicknameInput" placeholder="Nickname (optional)">
             <div class="btn-group">
-                <button class="btn-primary" onclick="addContact()">Add</button>
-                <button class="btn-secondary" onclick="closeModal('addContactModal')">Cancel</button>
+                <button class="btn-primary" id="addContactBtn" onclick="addContact()">Add</button>
+                <button class="btn-secondary" id="cancelAddBtn" onclick="closeModal('addContactModal')">Cancel</button>
             </div>
         </div>
     </div>
 
     <div id="createGroupModal" class="modal">
         <div class="modal-content">
-            <h3>Create Group</h3>
+            <h3 id="createGroupTitle">Create Group</h3>
             <input type="text" id="groupNameInput" placeholder="Group Name">
-            <p style="margin:10px 0;">Select members from contacts:</p>
+            <p style="margin:10px 0;" id="selectMembersLabel">Select members from contacts:</p>
             <div id="groupMembersList" style="max-height:150px; overflow-y:auto;"></div>
             <div class="btn-group">
-                <button class="btn-primary" onclick="createGroup()">Create</button>
-                <button class="btn-secondary" onclick="closeModal('createGroupModal')">Cancel</button>
+                <button class="btn-primary" id="createGroupBtn" onclick="createGroup()">Create</button>
+                <button class="btn-secondary" id="cancelGroupBtn" onclick="closeModal('createGroupModal')">Cancel</button>
             </div>
-        </div>
-    </div>
-
-    <div id="infoModal" class="modal">
-        <div class="modal-content">
-            <h3>How to Use</h3>
-            <ul style="padding-left:20px;">
-                <li><strong>Your ID</strong> – Tap to copy. It stays the same on this device.</li>
-                <li><strong>Add Contact</strong> – Tap + → Add Contact → enter their ID (optional nickname).</li>
-                <li><strong>Start Chat</strong> – Tap a contact from the list.</li>
-                <li><strong>Send Files</strong> – Click paperclip, choose any file (images/videos/audio/documents).</li>
-                <li><strong>Voice Note</strong> – Click microphone to record, click again to stop and send.</li>
-                <li><strong>React</strong> – Click the reaction button on any message to add emoji.</li>
-                <li><strong>Delete Message</strong> – Long‑press (or right‑click) a message to delete it.</li>
-                <li><strong>Edit Contact</strong> – Three‑dot menu on a contact → Edit.</li>
-                <li><strong>Profile Photo</strong> – Click avatar to upload; others will see it.</li>
-                <li><strong>Settings</strong> – Cog icon to change theme, online status, language.</li>
-            </ul>
-            <button class="btn-primary" onclick="closeModal('infoModal')">Got it</button>
         </div>
     </div>
 
     <div class="toast" id="toast"></div>
 
     <script>
+        // ---------- Language translations ----------
+        const translations = {
+            en: {
+                settingsTitle: "Settings",
+                onlineStatusLabel: "Online Status",
+                themeLabel: "Theme",
+                languageLabel: "App Language",
+                closeSettings: "Close",
+                chatsTitle: "Chats",
+                sendBtn: "Send",
+                messageInputPlaceholder: "Type a message...",
+                addContactOpt: "Add Contact",
+                createGroupOpt: "Create Group",
+                cancelOpt: "Cancel",
+                addContactTitle: "Add Contact",
+                contactIdPlaceholder: "User ID",
+                nicknamePlaceholder: "Nickname (optional)",
+                addContactBtn: "Add",
+                cancelAddBtn: "Cancel",
+                createGroupTitle: "Create Group",
+                groupNamePlaceholder: "Group Name",
+                selectMembersLabel: "Select members from contacts:",
+                createGroupBtn: "Create",
+                cancelGroupBtn: "Cancel",
+                editContactTitle: "Edit Contact",
+                editNicknamePlaceholder: "Nickname",
+                saveEditBtn: "Save",
+                cancelEditBtn: "Cancel",
+                infoTitle: "How to Use",
+                infoGotIt: "Got it",
+                online: "Online",
+                offline: "Offline",
+                pinBadge: "Pinned",
+                tapToStart: "Tap to start",
+                delete: "Delete",
+                edit: "Edit",
+                pin: "Pin",
+                unpin: "Unpin",
+                // Add more as needed
+            },
+            es: {
+                settingsTitle: "Ajustes",
+                onlineStatusLabel: "Estado en línea",
+                themeLabel: "Tema",
+                languageLabel: "Idioma",
+                closeSettings: "Cerrar",
+                chatsTitle: "Charlas",
+                sendBtn: "Enviar",
+                messageInputPlaceholder: "Escribe un mensaje...",
+                addContactOpt: "Añadir contacto",
+                createGroupOpt: "Crear grupo",
+                cancelOpt: "Cancelar",
+                addContactTitle: "Añadir contacto",
+                contactIdPlaceholder: "ID de usuario",
+                nicknamePlaceholder: "Apodo (opcional)",
+                addContactBtn: "Añadir",
+                cancelAddBtn: "Cancelar",
+                createGroupTitle: "Crear grupo",
+                groupNamePlaceholder: "Nombre del grupo",
+                selectMembersLabel: "Seleccionar miembros de contactos:",
+                createGroupBtn: "Crear",
+                cancelGroupBtn: "Cancelar",
+                editContactTitle: "Editar contacto",
+                editNicknamePlaceholder: "Apodo",
+                saveEditBtn: "Guardar",
+                cancelEditBtn: "Cancelar",
+                infoTitle: "Cómo usar",
+                infoGotIt: "Entendido",
+                online: "En línea",
+                offline: "Desconectado",
+                pinBadge: "Fijado",
+                tapToStart: "Toca para iniciar",
+                delete: "Eliminar",
+                edit: "Editar",
+                pin: "Fijar",
+                unpin: "Desfijar",
+            },
+            fr: {
+                settingsTitle: "Paramètres",
+                onlineStatusLabel: "Statut en ligne",
+                themeLabel: "Thème",
+                languageLabel: "Langue",
+                closeSettings: "Fermer",
+                chatsTitle: "Discussions",
+                sendBtn: "Envoyer",
+                messageInputPlaceholder: "Tapez un message...",
+                addContactOpt: "Ajouter un contact",
+                createGroupOpt: "Créer un groupe",
+                cancelOpt: "Annuler",
+                addContactTitle: "Ajouter un contact",
+                contactIdPlaceholder: "ID utilisateur",
+                nicknamePlaceholder: "Surnom (optionnel)",
+                addContactBtn: "Ajouter",
+                cancelAddBtn: "Annuler",
+                createGroupTitle: "Créer un groupe",
+                groupNamePlaceholder: "Nom du groupe",
+                selectMembersLabel: "Sélectionner des membres parmi les contacts:",
+                createGroupBtn: "Créer",
+                cancelGroupBtn: "Annuler",
+                editContactTitle: "Modifier le contact",
+                editNicknamePlaceholder: "Surnom",
+                saveEditBtn: "Enregistrer",
+                cancelEditBtn: "Annuler",
+                infoTitle: "Comment utiliser",
+                infoGotIt: "Compris",
+                online: "En ligne",
+                offline: "Hors ligne",
+                pinBadge: "Épinglé",
+                tapToStart: "Appuyez pour démarrer",
+                delete: "Supprimer",
+                edit: "Modifier",
+                pin: "Épingler",
+                unpin: "Désépingler",
+            },
+            de: {
+                settingsTitle: "Einstellungen",
+                onlineStatusLabel: "Online-Status",
+                themeLabel: "Design",
+                languageLabel: "Sprache",
+                closeSettings: "Schließen",
+                chatsTitle: "Chats",
+                sendBtn: "Senden",
+                messageInputPlaceholder: "Nachricht eingeben...",
+                addContactOpt: "Kontakt hinzufügen",
+                createGroupOpt: "Gruppe erstellen",
+                cancelOpt: "Abbrechen",
+                addContactTitle: "Kontakt hinzufügen",
+                contactIdPlaceholder: "Benutzer-ID",
+                nicknamePlaceholder: "Spitzname (optional)",
+                addContactBtn: "Hinzufügen",
+                cancelAddBtn: "Abbrechen",
+                createGroupTitle: "Gruppe erstellen",
+                groupNamePlaceholder: "Gruppenname",
+                selectMembersLabel: "Mitglieder aus Kontakten auswählen:",
+                createGroupBtn: "Erstellen",
+                cancelGroupBtn: "Abbrechen",
+                editContactTitle: "Kontakt bearbeiten",
+                editNicknamePlaceholder: "Spitzname",
+                saveEditBtn: "Speichern",
+                cancelEditBtn: "Abbrechen",
+                infoTitle: "So wird's gemacht",
+                infoGotIt: "Verstanden",
+                online: "Online",
+                offline: "Offline",
+                pinBadge: "Angepinnt",
+                tapToStart: "Tippen zum Starten",
+                delete: "Löschen",
+                edit: "Bearbeiten",
+                pin: "Anheften",
+                unpin: "Lösen",
+            },
+            zh: {
+                settingsTitle: "设置",
+                onlineStatusLabel: "在线状态",
+                themeLabel: "主题",
+                languageLabel: "语言",
+                closeSettings: "关闭",
+                chatsTitle: "聊天",
+                sendBtn: "发送",
+                messageInputPlaceholder: "输入消息...",
+                addContactOpt: "添加联系人",
+                createGroupOpt: "创建群组",
+                cancelOpt: "取消",
+                addContactTitle: "添加联系人",
+                contactIdPlaceholder: "用户ID",
+                nicknamePlaceholder: "昵称（可选）",
+                addContactBtn: "添加",
+                cancelAddBtn: "取消",
+                createGroupTitle: "创建群组",
+                groupNamePlaceholder: "群组名称",
+                selectMembersLabel: "从联系人中选择成员：",
+                createGroupBtn: "创建",
+                cancelGroupBtn: "取消",
+                editContactTitle: "编辑联系人",
+                editNicknamePlaceholder: "昵称",
+                saveEditBtn: "保存",
+                cancelEditBtn: "取消",
+                infoTitle: "使用说明",
+                infoGotIt: "知道了",
+                online: "在线",
+                offline: "离线",
+                pinBadge: "已置顶",
+                tapToStart: "点击开始",
+                delete: "删除",
+                edit: "编辑",
+                pin: "置顶",
+                unpin: "取消置顶",
+            }
+        };
+
+        // ---------- Language management ----------
+        let currentLang = localStorage.getItem('p2p_language') || 'en';
+        function applyLanguage(lang) {
+            const t = translations[lang];
+            if (!t) return;
+            document.getElementById('settingsTitle').innerText = t.settingsTitle;
+            document.getElementById('onlineStatusLabel').innerText = t.onlineStatusLabel;
+            document.getElementById('themeLabel').innerText = t.themeLabel;
+            document.getElementById('languageLabel').innerText = t.languageLabel;
+            document.getElementById('closeSettingsBtn').innerText = t.closeSettings;
+            document.getElementById('chatsTitle').innerText = t.chatsTitle;
+            document.getElementById('sendBtn').innerText = t.sendBtn;
+            document.getElementById('messageInput').placeholder = t.messageInputPlaceholder;
+            document.getElementById('addContactOpt').innerText = t.addContactOpt;
+            document.getElementById('createGroupOpt').innerText = t.createGroupOpt;
+            document.getElementById('cancelOpt').innerText = t.cancelOpt;
+            document.getElementById('addContactTitle').innerText = t.addContactTitle;
+            document.getElementById('contactIdInput').placeholder = t.contactIdPlaceholder;
+            document.getElementById('nicknameInput').placeholder = t.nicknamePlaceholder;
+            document.getElementById('addContactBtn').innerText = t.addContactBtn;
+            document.getElementById('cancelAddBtn').innerText = t.cancelAddBtn;
+            document.getElementById('createGroupTitle').innerText = t.createGroupTitle;
+            document.getElementById('groupNameInput').placeholder = t.groupNamePlaceholder;
+            document.getElementById('selectMembersLabel').innerText = t.selectMembersLabel;
+            document.getElementById('createGroupBtn').innerText = t.createGroupBtn;
+            document.getElementById('cancelGroupBtn').innerText = t.cancelGroupBtn;
+            document.getElementById('editContactTitle').innerText = t.editContactTitle;
+            document.getElementById('editNickname').placeholder = t.editNicknamePlaceholder;
+            document.getElementById('saveEditBtn').innerText = t.saveEditBtn;
+            document.getElementById('cancelEditBtn').innerText = t.cancelEditBtn;
+            document.getElementById('infoTitle').innerText = t.infoTitle;
+            document.getElementById('infoGotIt').innerText = t.infoGotIt;
+            // Update online status display
+            onlineStatus.innerText = onlineSwitch.checked ? t.online : t.offline;
+            // Note: we might need to update pin badges etc. but they are dynamically generated; we'll handle in renderChats later.
+            // For simplicity, we'll reload chats after language change to update static text? But pin badges are generated per chat.
+            // We'll handle by re-rendering chats when language changes.
+            loadChats(); // re-render chats with new language strings
+        }
+
         // ---------- Static user ID ----------
         function getUserId() {
             let id = localStorage.getItem('p2p_user_id');
@@ -912,14 +1044,14 @@
             navigator.clipboard.writeText(myId).then(() => showToast('ID copied'));
         });
 
-        // ---------- Settings panel ----------
-        const settingsPanel = document.getElementById('settingsPanel');
+        // ---------- Settings modal ----------
+        const settingsModal = document.getElementById('settingsModal');
         document.getElementById('settingsBtn').addEventListener('click', () => {
-            settingsPanel.classList.toggle('open');
+            settingsModal.style.display = 'flex';
         });
-        window.closeSettings = function() {
-            settingsPanel.classList.remove('open');
-        };
+        document.getElementById('closeSettingsBtn').addEventListener('click', () => {
+            settingsModal.style.display = 'none';
+        });
 
         // Online status toggle
         const onlineSwitch = document.getElementById('onlineSwitch');
@@ -927,36 +1059,42 @@
         const onlineIndicator = document.getElementById('onlineIndicator');
         onlineSwitch.addEventListener('change', () => {
             const isOnline = onlineSwitch.checked;
-            onlineStatus.innerText = isOnline ? 'Online' : 'Offline';
+            const t = translations[currentLang];
+            onlineStatus.innerText = isOnline ? t.online : t.offline;
             onlineIndicator.style.background = isOnline ? '#10b981' : '#ef4444';
-            // You can extend this to actually affect presence
         });
 
-        // Theme switching with CSS variables
+        // Theme switching
         window.setTheme = function(theme) {
-            // Remove previous theme classes from body
             document.body.className = '';
             document.body.classList.add(`theme-${theme}`);
-            // Highlight active theme button
             document.querySelectorAll('.theme-btn').forEach(btn => btn.classList.remove('active'));
             document.querySelector(`.theme-btn.${theme}`).classList.add('active');
-            // Save to localStorage
             localStorage.setItem('p2p_theme', theme);
         };
-
-        // Load saved theme
         const savedTheme = localStorage.getItem('p2p_theme') || 'dark';
         setTheme(savedTheme);
 
-        // Language selector (placeholder)
+        // Language selector
         document.getElementById('languageSelect').addEventListener('change', (e) => {
-            showToast(`Language changed to ${e.target.value} (demo)`);
+            currentLang = e.target.value;
+            localStorage.setItem('p2p_language', currentLang);
+            applyLanguage(currentLang);
         });
+        // Set initial language from localStorage
+        document.getElementById('languageSelect').value = currentLang;
+        applyLanguage(currentLang);
 
+        // Info modal
         document.getElementById('infoBtn').addEventListener('click', () => {
             document.getElementById('infoModal').style.display = 'flex';
         });
 
+        window.closeModal = function(id) {
+            document.getElementById(id).style.display = 'none';
+        };
+
+        // Avatar upload
         window.uploadAvatar = function() {
             const fileInput = document.getElementById('profileUpload');
             const file = fileInput.files[0];
@@ -1015,6 +1153,7 @@
         }
 
         function renderChats(chats) {
+            const t = translations[currentLang];
             const container = document.getElementById('chatsList');
             container.innerHTML = '';
             chats.forEach(chat => {
@@ -1025,16 +1164,16 @@
                     <div class="chat-details">
                         <div class="chat-name">
                             ${escapeHtml(chat.name)}
-                            ${chat.pinned ? '<span class="pin-badge">📌 Pinned</span>' : ''}
+                            ${chat.pinned ? `<span class="pin-badge">📌 ${t.pinBadge}</span>` : ''}
                         </div>
-                        <div class="chat-last">Tap to start</div>
+                        <div class="chat-last">${t.tapToStart}</div>
                     </div>
                     <button class="dots" onclick="event.stopPropagation(); toggleMenu('${chat.type}-${chat.id}')"><i class="fas fa-ellipsis-v"></i></button>
                     <div id="menu-${chat.type}-${chat.id}" class="menu">
                         ${chat.type === 'contact' ? `
-                            <button onclick="editContact('${chat.id}', '${escapeHtml(chat.name)}')"><i class="fas fa-edit"></i> Edit</button>
-                            <button onclick="pinContact('${chat.id}', ${chat.pinned ? 0 : 1})"><i class="fas fa-thumbtack"></i> ${chat.pinned ? 'Unpin' : 'Pin'}</button>
-                            <button onclick="deleteContact('${chat.id}')"><i class="fas fa-trash"></i> Delete</button>
+                            <button onclick="editContact('${chat.id}', '${escapeHtml(chat.name)}')"><i class="fas fa-edit"></i> ${t.edit}</button>
+                            <button onclick="pinContact('${chat.id}', ${chat.pinned ? 0 : 1})"><i class="fas fa-thumbtack"></i> ${chat.pinned ? t.unpin : t.pin}</button>
+                            <button onclick="deleteContact('${chat.id}')"><i class="fas fa-trash"></i> ${t.delete}</button>
                         ` : `
                             <button onclick="viewGroupInfo('${chat.id}')">Group Info</button>
                         `}
@@ -1236,7 +1375,7 @@
             if (existing) existing.remove();
             const popup = document.createElement('div');
             popup.className = 'delete-popup';
-            popup.innerText = 'Delete';
+            popup.innerText = translations[currentLang].delete || 'Delete';
             popup.onclick = () => {
                 deleteMessage(msgId);
                 popup.remove();
@@ -1284,14 +1423,12 @@
                 return;
             }
             if (!recording) {
-                // Check browser support
                 if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
                     showToast('Voice recording not supported in this browser');
                     return;
                 }
                 navigator.mediaDevices.getUserMedia({ audio: true })
                     .then(stream => {
-                        // Use audio/webm for best compatibility
                         const mimeType = MediaRecorder.isTypeSupported('audio/webm') ? 'audio/webm' : 'audio/mp4';
                         mediaRecorder = new MediaRecorder(stream, { mimeType });
                         mediaRecorder.start();
@@ -1466,9 +1603,6 @@
                 loadChats();
             });
         };
-        function closeModal(id) {
-            document.getElementById(id).style.display = 'none';
-        }
 
         document.addEventListener('click', (e) => {
             if (!e.target.closest('#reactionPopup') && !e.target.closest('.reaction')) {
