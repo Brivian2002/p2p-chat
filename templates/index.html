@@ -19,6 +19,7 @@
             align-items: center;
             justify-content: center;
             padding: 0;
+            transition: background 0.3s;
         }
         .app {
             width: 100%;
@@ -29,6 +30,32 @@
             flex-direction: column;
             overflow: hidden;
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            transition: background 0.3s, color 0.3s;
+        }
+        /* Theme classes */
+        .theme-dark {
+            background: #1f2937;
+            color: #e5e7eb;
+        }
+        .theme-light {
+            background: #ffffff;
+            color: #111827;
+        }
+        .theme-blue {
+            background: #1e3a8a;
+            color: #ffffff;
+        }
+        .theme-yellow {
+            background: #fbbf24;
+            color: #111827;
+        }
+        .theme-green {
+            background: #10b981;
+            color: #111827;
+        }
+        .theme-blue-black {
+            background: #0f172a;
+            color: #e2e8f0;
         }
         .top-bar {
             background: #111827;
@@ -110,6 +137,109 @@
         .icon-btn:hover {
             background: #2d3a4e;
             color: #10b981;
+        }
+        /* Settings panel (slide-out) */
+        .settings-panel {
+            position: absolute;
+            top: 0;
+            right: -300px;
+            width: 280px;
+            height: 100%;
+            background: #2d3a4e;
+            border-left: 1px solid #4b5563;
+            transition: right 0.3s ease;
+            z-index: 200;
+            padding: 20px;
+            color: #e5e7eb;
+            overflow-y: auto;
+        }
+        .settings-panel.open {
+            right: 0;
+        }
+        .settings-panel h3 {
+            margin-bottom: 20px;
+            font-size: 20px;
+        }
+        .settings-item {
+            margin-bottom: 20px;
+        }
+        .settings-item label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 52px;
+            height: 28px;
+        }
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #4b5563;
+            border-radius: 34px;
+            transition: .2s;
+        }
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 22px;
+            width: 22px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            border-radius: 50%;
+            transition: .2s;
+        }
+        input:checked + .slider {
+            background-color: #10b981;
+        }
+        input:checked + .slider:before {
+            transform: translateX(24px);
+        }
+        .theme-buttons {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .theme-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 2px solid transparent;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .theme-btn:hover {
+            transform: scale(1.1);
+        }
+        .theme-btn.dark { background: #1f2937; border-color: #e5e7eb; }
+        .theme-btn.light { background: #ffffff; border-color: #111827; }
+        .theme-btn.blue { background: #1e3a8a; border-color: #ffffff; }
+        .theme-btn.yellow { background: #fbbf24; border-color: #111827; }
+        .theme-btn.green { background: #10b981; border-color: #111827; }
+        .theme-btn.blue-black { background: #0f172a; border-color: #e2e8f0; }
+        .theme-btn.active {
+            border-color: #ff69b4;
+            transform: scale(1.1);
+        }
+        .language-select {
+            width: 100%;
+            padding: 8px;
+            border-radius: 20px;
+            background: #1f2937;
+            color: #e5e7eb;
+            border: 1px solid #4b5563;
         }
         .panel {
             flex: 1;
@@ -358,41 +488,44 @@
             border-radius: 8px;
             object-fit: cover;
         }
-        .audio-player, .video-player {
-            max-width: 220px;
+        .audio-player {
+            max-width: 200px;
         }
         .input-area {
             background: #111827;
-            padding: 10px 12px;
+            padding: 8px 12px;
             border-top: 1px solid #2d3a4e;
             display: flex;
-            gap: 8px;
+            gap: 6px;
             align-items: center;
             flex-wrap: wrap;
         }
         .input-area input {
-            flex: 1;
-            min-width: 150px;
-            padding: 12px 16px;
+            flex: 1 1 150px;
+            min-width: 120px;
+            padding: 10px 12px;
             border: 1px solid #4b5563;
             border-radius: 40px;
             outline: none;
             background: #2d3a4e;
             color: #e5e7eb;
-        }
-        .input-area input:focus {
-            border-color: #10b981;
+            font-size: 14px;
+            height: 42px;
         }
         .input-area button {
             background: #2d3a4e;
             border: none;
-            width: 44px;
-            height: 44px;
+            width: 42px;
+            height: 42px;
             border-radius: 50%;
             font-size: 18px;
             color: #e5e7eb;
             cursor: pointer;
             border: 1px solid #4b5563;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         .input-area button:hover {
             background: #4b5563;
@@ -402,10 +535,13 @@
             background: #10b981 !important;
             color: #111827 !important;
             width: auto !important;
-            padding: 0 24px !important;
+            padding: 0 18px !important;
             border-radius: 40px !important;
             font-weight: 600;
             border: none !important;
+            font-size: 14px;
+            height: 42px;
+            line-height: 42px;
         }
         .send-btn:hover {
             background: #ff69b4 !important;
@@ -545,10 +681,12 @@
             .top-bar { padding: 8px; }
             .user-id-badge { max-width: 120px; font-size: 12px; }
             .chat-item { padding: 12px; }
+            .input-area button { width: 38px; height: 38px; }
+            .send-btn { padding: 0 12px !important; }
         }
     </style>
 </head>
-<body>
+<body class="theme-dark">
     <div class="app">
         <div class="top-bar">
             <div class="profile-photo" id="profilePhoto" onclick="document.getElementById('profileUpload').click()">
@@ -560,7 +698,43 @@
                 <i class="fas fa-id-card"></i> <span id="myId"></span>
             </div>
             <div class="spacer"></div>
+            <button class="icon-btn" id="settingsBtn"><i class="fas fa-cog"></i></button>
             <button class="icon-btn" id="infoBtn"><i class="fas fa-info-circle"></i></button>
+        </div>
+
+        <!-- Settings Panel -->
+        <div class="settings-panel" id="settingsPanel">
+            <h3>Settings</h3>
+            <div class="settings-item">
+                <label>Online Status</label>
+                <label class="switch">
+                    <input type="checkbox" id="onlineSwitch" checked>
+                    <span class="slider"></span>
+                </label>
+                <span id="onlineStatus" style="margin-left: 10px;">Online</span>
+            </div>
+            <div class="settings-item">
+                <label>Theme</label>
+                <div class="theme-buttons">
+                    <div class="theme-btn dark" data-theme="dark" onclick="setTheme('dark')"></div>
+                    <div class="theme-btn light" data-theme="light" onclick="setTheme('light')"></div>
+                    <div class="theme-btn blue" data-theme="blue" onclick="setTheme('blue')"></div>
+                    <div class="theme-btn yellow" data-theme="yellow" onclick="setTheme('yellow')"></div>
+                    <div class="theme-btn green" data-theme="green" onclick="setTheme('green')"></div>
+                    <div class="theme-btn blue-black" data-theme="blue-black" onclick="setTheme('blue-black')"></div>
+                </div>
+            </div>
+            <div class="settings-item">
+                <label>App Language</label>
+                <select class="language-select" id="languageSelect">
+                    <option value="en">English</option>
+                    <option value="es">Spanish</option>
+                    <option value="fr">French</option>
+                    <option value="de">German</option>
+                    <option value="zh">Chinese</option>
+                </select>
+            </div>
+            <button class="btn-secondary" onclick="closeSettings()">Close</button>
         </div>
 
         <div id="chatsPanel" class="panel">
@@ -657,6 +831,7 @@
     <div class="toast" id="toast"></div>
 
     <script>
+        // ---------- Static user ID ----------
         function getUserId() {
             let id = localStorage.getItem('p2p_user_id');
             if (!id) {
@@ -686,6 +861,44 @@
 
         document.getElementById('userIdBadge').addEventListener('click', () => {
             navigator.clipboard.writeText(myId).then(() => showToast('ID copied'));
+        });
+
+        // ---------- Settings panel ----------
+        const settingsPanel = document.getElementById('settingsPanel');
+        document.getElementById('settingsBtn').addEventListener('click', () => {
+            settingsPanel.classList.toggle('open');
+        });
+        window.closeSettings = function() {
+            settingsPanel.classList.remove('open');
+        };
+
+        // Online status toggle
+        const onlineSwitch = document.getElementById('onlineSwitch');
+        const onlineStatus = document.getElementById('onlineStatus');
+        onlineSwitch.addEventListener('change', () => {
+            onlineStatus.innerText = onlineSwitch.checked ? 'Online' : 'Offline';
+            // You can extend this to actually affect presence
+        });
+
+        // Theme switching
+        window.setTheme = function(theme) {
+            // Remove previous theme classes from body
+            document.body.className = '';
+            document.body.classList.add(`theme-${theme}`);
+            // Highlight active theme button
+            document.querySelectorAll('.theme-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelector(`.theme-btn.${theme}`).classList.add('active');
+            // Optionally save to localStorage
+            localStorage.setItem('p2p_theme', theme);
+        };
+
+        // Load saved theme
+        const savedTheme = localStorage.getItem('p2p_theme') || 'dark';
+        setTheme(savedTheme);
+
+        // Language selector (placeholder)
+        document.getElementById('languageSelect').addEventListener('change', (e) => {
+            showToast(`Language changed to ${e.target.value} (demo)`);
         });
 
         document.getElementById('infoBtn').addEventListener('click', () => {
@@ -882,7 +1095,7 @@
                 return `<div class="file-attachment"><img src="${url}" class="file-thumb" onclick="window.open('${url}')"><a href="${url}" download style="color:#10b981;">Download</a></div>`;
             } else if (['mp4','webm','ogg'].includes(ext)) {
                 return `<div class="file-attachment"><video src="${url}" class="video-player" controls style="max-width:180px;"></video><a href="${url}" download style="color:#10b981;">Download</a></div>`;
-            } else if (['mp3','m4a','aac','wav'].includes(ext)) {
+            } else if (['mp3','m4a','aac','wav','webm'].includes(ext)) {
                 return `<div class="file-attachment"><audio src="${url}" class="audio-player" controls style="max-width:180px;"></audio><a href="${url}" download style="color:#10b981;">Download</a></div>`;
             } else {
                 return `<div class="file-attachment"><i class="fas fa-file"></i> <a href="${url}" download style="color:#10b981;">${name}</a></div>`;
@@ -1008,6 +1221,7 @@
             }
         });
 
+        // ---------- Voice note recording (audio only) ----------
         let mediaRecorder;
         let audioChunks = [];
         let recording = false;
@@ -1029,14 +1243,15 @@
                             audioChunks.push(event.data);
                         });
                         mediaRecorder.addEventListener('stop', () => {
-                            const audioBlob = new Blob(audioChunks, { type: 'audio/mp4' });
-                            const file = new File([audioBlob], 'voice.mp4', { type: 'audio/mp4' });
+                            // Use audio/webm for better compatibility
+                            const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+                            const file = new File([audioBlob], 'voice.webm', { type: 'audio/webm' });
                             sendVoiceFile(file);
                             stream.getTracks().forEach(track => track.stop());
                         });
                     })
                     .catch(err => {
-                        showToast('Microphone access denied');
+                        showToast('Microphone access denied. Please allow microphone permissions.');
                         console.error(err);
                     });
             } else {
