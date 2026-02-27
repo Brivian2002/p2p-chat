@@ -6,7 +6,9 @@ from werkzeug.utils import secure_filename
 app = Flask(__name__)
 app.secret_key = os.environ.get('SECRET_KEY', secrets.token_hex(16))
 
+# ---------- Detect environment ----------
 ON_RENDER = os.environ.get('RENDER') == 'true'
+print(f"Running on Render: {ON_RENDER}")  # Debug line – check logs later
 
 if ON_RENDER:
     import psycopg2
@@ -280,16 +282,26 @@ def get_private_messages(contact_id):
                 ORDER BY timestamp
             """, (user, contact_id, contact_id, user))
         rows = cur.fetchall()
-        msg_ids = [r[0] for r in rows]
+        # Get message IDs based on database type
+        if ON_RENDER:
+            msg_ids = [r['id'] for r in rows]
+        else:
+            msg_ids = [r[0] for r in rows]
         reactions = {}
         if msg_ids:
             placeholders = ','.join(['%s'] * len(msg_ids)) if ON_RENDER else ','.join(['?'] * len(msg_ids))
             cur.execute(f"SELECT message_id, user_id, emoji FROM reactions WHERE message_id IN ({placeholders})", msg_ids)
             for r in cur.fetchall():
-                mid = r[0]
+                if ON_RENDER:
+                    mid = r['message_id']
+                else:
+                    mid = r[0]
                 if mid not in reactions:
                     reactions[mid] = []
-                reactions[mid].append({"user": r[1], "emoji": r[2]})
+                if ON_RENDER:
+                    reactions[mid].append({"user": r['user_id'], "emoji": r['emoji']})
+                else:
+                    reactions[mid].append({"user": r[1], "emoji": r[2]})
     finally:
         cur.close()
         release_db(conn)
@@ -558,16 +570,25 @@ def get_group_messages_route(group_id):
                 ORDER BY timestamp
             """, (group_id,))
         rows = cur.fetchall()
-        msg_ids = [r[0] for r in rows]
+        if ON_RENDER:
+            msg_ids = [r['id'] for r in rows]
+        else:
+            msg_ids = [r[0] for r in rows]
         reactions = {}
         if msg_ids:
             placeholders = ','.join(['%s'] * len(msg_ids)) if ON_RENDER else ','.join(['?'] * len(msg_ids))
             cur.execute(f"SELECT message_id, user_id, emoji FROM reactions WHERE message_id IN ({placeholders})", msg_ids)
             for r in cur.fetchall():
-                mid = r[0]
+                if ON_RENDER:
+                    mid = r['message_id']
+                else:
+                    mid = r[0]
                 if mid not in reactions:
                     reactions[mid] = []
-                reactions[mid].append({"user": r[1], "emoji": r[2]})
+                if ON_RENDER:
+                    reactions[mid].append({"user": r['user_id'], "emoji": r['emoji']})
+                else:
+                    reactions[mid].append({"user": r[1], "emoji": r[2]})
     finally:
         cur.close()
         release_db(conn)
