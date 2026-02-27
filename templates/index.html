@@ -12,7 +12,6 @@
             box-sizing: border-box;
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
         }
-
         body {
             background: #111827;
             height: 100vh;
@@ -21,7 +20,6 @@
             justify-content: center;
             padding: 0;
         }
-
         .app {
             width: 100%;
             max-width: 600px;
@@ -31,10 +29,7 @@
             flex-direction: column;
             overflow: hidden;
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-            border-radius: 0;
         }
-
-        /* Top bar */
         .top-bar {
             background: #111827;
             padding: 12px 16px;
@@ -44,7 +39,6 @@
             gap: 10px;
             flex-wrap: wrap;
         }
-
         .profile-photo {
             width: 44px;
             height: 44px;
@@ -64,13 +58,11 @@
         .profile-photo:hover {
             border-color: #ff69b4;
         }
-
         .profile-photo img {
             width: 100%;
             height: 100%;
             object-fit: cover;
         }
-
         .profile-photo input {
             position: absolute;
             opacity: 0;
@@ -78,7 +70,6 @@
             height: 100%;
             cursor: pointer;
         }
-
         .user-id-badge {
             background: #2d3a4e;
             padding: 8px 16px;
@@ -99,11 +90,9 @@
         .user-id-badge:hover {
             border-color: #ff69b4;
         }
-
         .spacer {
             flex: 1;
         }
-
         .icon-btn {
             background: none;
             border: none;
@@ -122,15 +111,12 @@
             background: #2d3a4e;
             color: #10b981;
         }
-
-        /* Chats panel */
         .panel {
             flex: 1;
             overflow-y: auto;
             background: #1f2937;
             padding: 16px;
         }
-
         .chats-header {
             display: flex;
             justify-content: space-between;
@@ -141,7 +127,6 @@
             font-size: 24px;
             color: #e5e7eb;
         }
-
         .fab {
             background: #10b981;
             color: #111827;
@@ -159,7 +144,6 @@
             background: #ff69b4;
             color: white;
         }
-
         .chat-item {
             background: #2d3a4e;
             border-radius: 24px;
@@ -176,7 +160,6 @@
         .chat-item:hover {
             border-color: #10b981;
         }
-
         .avatar {
             width: 56px;
             height: 56px;
@@ -197,7 +180,6 @@
             height: 100%;
             object-fit: cover;
         }
-
         .chat-details {
             flex: 1;
             min-width: 0;
@@ -237,7 +219,6 @@
         .dots:hover {
             background: #4b5563;
         }
-
         .menu {
             display: none;
             position: absolute;
@@ -266,8 +247,6 @@
         .menu button:hover {
             background: #4b5563;
         }
-
-        /* Chat area */
         .chat-area {
             display: none;
             flex-direction: column;
@@ -304,6 +283,7 @@
             flex-direction: column;
             max-width: 80%;
             position: relative;
+            user-select: none;
         }
         .message-wrapper.sent {
             align-self: flex-end;
@@ -318,6 +298,7 @@
             font-size: 14px;
             background: #2d3a4e;
             color: #e5e7eb;
+            transition: background 0.2s;
         }
         .sent .message-bubble {
             background: #10b981;
@@ -377,8 +358,8 @@
             border-radius: 8px;
             object-fit: cover;
         }
-        .audio-player {
-            max-width: 200px;
+        .audio-player, .video-player {
+            max-width: 220px;
         }
         .input-area {
             background: #111827;
@@ -430,8 +411,6 @@
             background: #ff69b4 !important;
             color: white !important;
         }
-
-        /* Reaction popup (5 emojis) */
         .reaction-popup {
             display: none;
             position: absolute;
@@ -453,8 +432,21 @@
         .reaction-popup span:hover {
             transform: scale(1.2);
         }
-
-        /* Recording indicator */
+        .delete-popup {
+            position: absolute;
+            background: #2d3a4e;
+            border-radius: 16px;
+            padding: 8px 12px;
+            border: 1px solid #ff69b4;
+            color: white;
+            font-size: 14px;
+            cursor: pointer;
+            z-index: 200;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+        }
+        .delete-popup:hover {
+            background: #ff69b4;
+        }
         .recording {
             background: #ef4444 !important;
             animation: pulse 1.5s infinite;
@@ -464,8 +456,6 @@
             50% { opacity: 0.5; }
             100% { opacity: 1; }
         }
-
-        /* Modals */
         .modal {
             display: none;
             position: fixed;
@@ -551,7 +541,6 @@
         .toast.show {
             opacity: 1;
         }
-
         @media (max-width: 480px) {
             .top-bar { padding: 8px; }
             .user-id-badge { max-width: 120px; font-size: 12px; }
@@ -561,7 +550,6 @@
 </head>
 <body>
     <div class="app">
-        <!-- Top bar -->
         <div class="top-bar">
             <div class="profile-photo" id="profilePhoto" onclick="document.getElementById('profileUpload').click()">
                 <span id="profileInitial">👤</span>
@@ -575,7 +563,6 @@
             <button class="icon-btn" id="infoBtn"><i class="fas fa-info-circle"></i></button>
         </div>
 
-        <!-- Chats panel -->
         <div id="chatsPanel" class="panel">
             <div class="chats-header">
                 <h2>Chats</h2>
@@ -584,13 +571,12 @@
             <div id="chatsList"></div>
         </div>
 
-        <!-- Chat area -->
         <div id="chatArea" class="chat-area">
             <div class="chat-header">
                 <span class="back-btn" onclick="closeChat()"><i class="fas fa-arrow-left"></i></span>
                 <span id="chatTitle" class="chat-title"></span>
             </div>
-            <div class="messages" id="messages"></div>
+            <div class="messages" id="messages" oncontextmenu="return false;"></div>
             <div class="input-area">
                 <input type="text" id="messageInput" placeholder="Type a message...">
                 <button id="voiceBtn"><i class="fas fa-microphone"></i></button>
@@ -601,12 +587,21 @@
         </div>
     </div>
 
-    <!-- Reaction popup (5 emojis) -->
     <div id="reactionPopup" class="reaction-popup">
         <span>😊</span><span>😂</span><span>❤️</span><span>👍</span><span>😢</span>
     </div>
 
-    <!-- Modals -->
+    <div id="editContactModal" class="modal">
+        <div class="modal-content">
+            <h3>Edit Contact</h3>
+            <input type="text" id="editNickname" placeholder="Nickname">
+            <div class="btn-group">
+                <button class="btn-primary" onclick="saveContactEdit()">Save</button>
+                <button class="btn-secondary" onclick="closeModal('editContactModal')">Cancel</button>
+            </div>
+        </div>
+    </div>
+
     <div id="addOptionsModal" class="modal">
         <div class="modal-content">
             <h3>New Chat</h3>
@@ -651,6 +646,8 @@
                 <li><strong>Send Files</strong> – Click paperclip, choose any file (images/videos/audio/documents).</li>
                 <li><strong>Voice Note</strong> – Click microphone to record, click again to stop and send.</li>
                 <li><strong>React</strong> – Click the reaction button on any message to add emoji.</li>
+                <li><strong>Delete Message</strong> – Long‑press (or right‑click) a message to delete it.</li>
+                <li><strong>Edit Contact</strong> – Three‑dot menu on a contact → Edit.</li>
                 <li><strong>Profile Photo</strong> – Click avatar to upload; others will see it.</li>
             </ul>
             <button class="btn-primary" onclick="closeModal('infoModal')">Got it</button>
@@ -660,7 +657,6 @@
     <div class="toast" id="toast"></div>
 
     <script>
-        // ---------- Static user ID (persisted in localStorage) ----------
         function getUserId() {
             let id = localStorage.getItem('p2p_user_id');
             if (!id) {
@@ -672,7 +668,6 @@
         const myId = getUserId();
         document.getElementById('myId').innerText = myId;
 
-        // ---------- Helper functions ----------
         function fetchWithAuth(url, options = {}) {
             options.headers = {
                 ...options.headers,
@@ -689,17 +684,14 @@
             setTimeout(() => t.classList.remove('show'), 2000);
         }
 
-        // Copy ID
         document.getElementById('userIdBadge').addEventListener('click', () => {
             navigator.clipboard.writeText(myId).then(() => showToast('ID copied'));
         });
 
-        // ---------- Info modal ----------
         document.getElementById('infoBtn').addEventListener('click', () => {
             document.getElementById('infoModal').style.display = 'flex';
         });
 
-        // ---------- Profile photo upload ----------
         window.uploadAvatar = function() {
             const fileInput = document.getElementById('profileUpload');
             const file = fileInput.files[0];
@@ -724,7 +716,6 @@
             .catch(() => showToast('Upload failed'));
         };
 
-        // Load own avatar on startup
         function loadMyAvatar() {
             fetch(`/api/avatar/${myId}`)
                 .then(res => res.json())
@@ -737,13 +728,11 @@
                 });
         }
 
-        // ---------- Global state ----------
-        let currentChat = null; // { type, id, name }
+        let currentChat = null;
         let contacts = [];
         let groups = [];
-        let messageReactions = {}; // in-memory reactions (for demo)
+        let currentEditContactId = null;
 
-        // ---------- Load chats (contacts & groups) ----------
         function loadChats() {
             Promise.all([
                 fetchWithAuth('/api/contacts').then(res => res.json()),
@@ -767,7 +756,7 @@
                 const div = document.createElement('div');
                 div.className = 'chat-item';
                 div.innerHTML = `
-                    <div class="avatar" style="background:${stringToColor(chat.id)}">${chat.name.charAt(0).toUpperCase()}</div>
+                    <div class="avatar" style="background:${stringToColor(chat.id)}">${escapeHtml(chat.name.charAt(0).toUpperCase())}</div>
                     <div class="chat-details">
                         <div class="chat-name">
                             ${escapeHtml(chat.name)}
@@ -778,6 +767,7 @@
                     <button class="dots" onclick="event.stopPropagation(); toggleMenu('${chat.type}-${chat.id}')"><i class="fas fa-ellipsis-v"></i></button>
                     <div id="menu-${chat.type}-${chat.id}" class="menu">
                         ${chat.type === 'contact' ? `
+                            <button onclick="editContact('${chat.id}', '${escapeHtml(chat.name)}')"><i class="fas fa-edit"></i> Edit</button>
                             <button onclick="pinContact('${chat.id}', ${chat.pinned ? 0 : 1})"><i class="fas fa-thumbtack"></i> ${chat.pinned ? 'Unpin' : 'Pin'}</button>
                             <button onclick="deleteContact('${chat.id}')"><i class="fas fa-trash"></i> Delete</button>
                         ` : `
@@ -816,7 +806,28 @@
             document.querySelectorAll('.menu').forEach(m => m.style.display = 'none');
         });
 
-        // ---------- Open chat ----------
+        window.editContact = function(contactId, currentName) {
+            currentEditContactId = contactId;
+            document.getElementById('editNickname').value = currentName;
+            document.getElementById('editContactModal').style.display = 'flex';
+        };
+
+        window.saveContactEdit = function() {
+            const newNickname = document.getElementById('editNickname').value.trim();
+            if (!newNickname) {
+                showToast('Nickname cannot be empty');
+                return;
+            }
+            fetchWithAuth(`/api/contacts/${currentEditContactId}`, {
+                method: 'PUT',
+                body: JSON.stringify({ nickname: newNickname })
+            }).then(() => {
+                showToast('Contact updated');
+                closeModal('editContactModal');
+                loadChats();
+            });
+        };
+
         function openChat(type, id, name) {
             currentChat = { type, id, name };
             document.getElementById('chatTitle').innerText = name;
@@ -831,7 +842,6 @@
             document.getElementById('chatsPanel').style.display = 'block';
         }
 
-        // ---------- Load messages ----------
         function loadMessages() {
             if (!currentChat) return;
             const url = currentChat.type === 'contact'
@@ -843,39 +853,24 @@
                     const container = document.getElementById('messages');
                     container.innerHTML = '';
                     msgs.forEach(msg => {
-                        if (currentChat.type === 'contact') {
-                            const [sender, recipient, content, file_url, timestamp] = msg;
-                            const isSent = sender === myId;
-                            const wrapper = document.createElement('div');
-                            wrapper.className = `message-wrapper ${isSent ? 'sent' : 'received'}`;
-                            let html = '';
-                            if (file_url) html += renderFilePreview(file_url);
-                            if (content) {
-                                if (html) html += '<br>';
-                                html += escapeHtml(content);
-                            }
-                            html += `<div class="message-time">${new Date(timestamp).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}</div>`;
-                            wrapper.innerHTML = `<div class="message-bubble">${html}</div>`;
-                            const msgId = `${sender}-${recipient}-${timestamp}`;
-                            addReactions(wrapper, msgId);
-                            container.appendChild(wrapper);
-                        } else {
-                            const isSent = msg.sender === myId;
-                            const wrapper = document.createElement('div');
-                            wrapper.className = `message-wrapper ${isSent ? 'sent' : 'received'}`;
-                            let senderName = isSent ? '' : `<div class="message-sender">${escapeHtml(getDisplayName(msg.sender))}</div>`;
-                            let html = '';
-                            if (msg.file_url) html += renderFilePreview(msg.file_url);
-                            if (msg.content) {
-                                if (html) html += '<br>';
-                                html += escapeHtml(msg.content);
-                            }
-                            html += `<div class="message-time">${new Date(msg.time).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}</div>`;
-                            wrapper.innerHTML = senderName + `<div class="message-bubble">${html}</div>`;
-                            const msgId = msg.id || `${msg.sender}-${msg.time}`;
-                            addReactions(wrapper, msgId);
-                            container.appendChild(wrapper);
+                        const isSent = msg.sender === myId;
+                        const wrapper = document.createElement('div');
+                        wrapper.className = `message-wrapper ${isSent ? 'sent' : 'received'}`;
+                        wrapper.dataset.msgId = msg.id;
+                        let senderName = '';
+                        if (!isSent && currentChat.type === 'group') {
+                            senderName = `<div class="message-sender">${escapeHtml(getDisplayName(msg.sender))}</div>`;
                         }
+                        let html = '';
+                        if (msg.file_url) html += renderFilePreview(msg.file_url);
+                        if (msg.content) {
+                            if (html) html += '<br>';
+                            html += escapeHtml(msg.content);
+                        }
+                        html += `<div class="message-time">${new Date(msg.time || msg.timestamp).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}</div>`;
+                        wrapper.innerHTML = senderName + `<div class="message-bubble">${html}</div>`;
+                        addReactions(wrapper, msg.id, msg.reactions || []);
+                        container.appendChild(wrapper);
                     });
                 });
         }
@@ -886,25 +881,32 @@
             if (['jpg','jpeg','png','gif','webp'].includes(ext)) {
                 return `<div class="file-attachment"><img src="${url}" class="file-thumb" onclick="window.open('${url}')"><a href="${url}" download style="color:#10b981;">Download</a></div>`;
             } else if (['mp4','webm','ogg'].includes(ext)) {
-                return `<div class="file-attachment"><video src="${url}" class="file-thumb" controls style="max-width:180px;"></video><a href="${url}" download style="color:#10b981;">Download</a></div>`;
+                return `<div class="file-attachment"><video src="${url}" class="video-player" controls style="max-width:180px;"></video><a href="${url}" download style="color:#10b981;">Download</a></div>`;
             } else if (['mp3','m4a','aac','wav'].includes(ext)) {
-                return `<div class="file-attachment"><audio src="${url}" controls style="max-width:180px;"></audio><a href="${url}" download style="color:#10b981;">Download</a></div>`;
+                return `<div class="file-attachment"><audio src="${url}" class="audio-player" controls style="max-width:180px;"></audio><a href="${url}" download style="color:#10b981;">Download</a></div>`;
             } else {
                 return `<div class="file-attachment"><i class="fas fa-file"></i> <a href="${url}" download style="color:#10b981;">${name}</a></div>`;
             }
         }
 
-        function addReactions(wrapper, msgId) {
+        function addReactions(wrapper, msgId, existingReactions) {
             const bar = document.createElement('div');
             bar.className = 'reaction-bar';
-            const reacts = messageReactions[msgId] || [];
-            reacts.forEach(r => {
+            const reactionCounts = {};
+            existingReactions.forEach(r => {
+                if (!reactionCounts[r.emoji]) reactionCounts[r.emoji] = 0;
+                reactionCounts[r.emoji]++;
+            });
+            for (let emoji in reactionCounts) {
                 const span = document.createElement('span');
                 span.className = 'reaction';
-                span.innerText = r;
-                span.onclick = (e) => { e.stopPropagation(); toggleReaction(msgId, r); };
+                span.innerText = `${emoji} ${reactionCounts[emoji]}`;
+                span.onclick = (e) => {
+                    e.stopPropagation();
+                    toggleReaction(msgId, emoji);
+                };
                 bar.appendChild(span);
-            });
+            }
             const addBtn = document.createElement('span');
             addBtn.className = 'reaction';
             addBtn.innerHTML = '<i class="far fa-smile"></i>';
@@ -922,7 +924,6 @@
             return c ? (c.nickname || uid) : uid;
         }
 
-        // ---------- Reactions ----------
         let currentReactionMsgId = null;
         const reactionPopup = document.getElementById('reactionPopup');
         reactionPopup.querySelectorAll('span').forEach(span => {
@@ -944,14 +945,69 @@
         }
 
         function toggleReaction(msgId, emoji) {
-            if (!messageReactions[msgId]) messageReactions[msgId] = [];
-            const idx = messageReactions[msgId].indexOf(emoji);
-            if (idx > -1) messageReactions[msgId].splice(idx, 1);
-            else messageReactions[msgId].push(emoji);
-            loadMessages(); // re-render
+            fetchWithAuth(`/api/messages/${msgId}/react`, {
+                method: 'POST',
+                body: JSON.stringify({ emoji })
+            }).then(() => loadMessages());
         }
 
-        // ---------- Voice note recording ----------
+        let longPressTimer;
+        let longPressMsgId = null;
+
+        function startLongPress(e, msgId) {
+            if (e.type === 'touchstart') {
+                longPressTimer = setTimeout(() => {
+                    showDeletePopup(msgId, e.target);
+                }, 500);
+            }
+        }
+
+        function cancelLongPress() {
+            clearTimeout(longPressTimer);
+        }
+
+        function showDeletePopup(msgId, target) {
+            const existing = document.querySelector('.delete-popup');
+            if (existing) existing.remove();
+            const popup = document.createElement('div');
+            popup.className = 'delete-popup';
+            popup.innerText = 'Delete';
+            popup.onclick = () => {
+                deleteMessage(msgId);
+                popup.remove();
+            };
+            document.body.appendChild(popup);
+            const rect = target.getBoundingClientRect();
+            popup.style.top = rect.top + 'px';
+            popup.style.left = rect.left + 'px';
+            setTimeout(() => {
+                if (popup.parentNode) popup.remove();
+            }, 5000);
+        }
+
+        function deleteMessage(msgId) {
+            fetchWithAuth(`/api/messages/${msgId}`, { method: 'DELETE' })
+                .then(() => loadMessages())
+                .catch(() => showToast('Delete failed'));
+        }
+
+        document.getElementById('messages').addEventListener('touchstart', (e) => {
+            const msgWrapper = e.target.closest('.message-wrapper');
+            if (msgWrapper) {
+                longPressMsgId = msgWrapper.dataset.msgId;
+                startLongPress(e, longPressMsgId);
+            }
+        });
+        document.getElementById('messages').addEventListener('touchend', cancelLongPress);
+        document.getElementById('messages').addEventListener('touchmove', cancelLongPress);
+        document.getElementById('messages').addEventListener('contextmenu', (e) => {
+            const msgWrapper = e.target.closest('.message-wrapper');
+            if (msgWrapper) {
+                e.preventDefault();
+                showDeletePopup(msgWrapper.dataset.msgId, e.target);
+            }
+        });
+
         let mediaRecorder;
         let audioChunks = [];
         let recording = false;
@@ -1019,7 +1075,6 @@
             });
         }
 
-        // ---------- Send message ----------
         document.getElementById('sendBtn').addEventListener('click', () => {
             if (!currentChat) return;
             const input = document.getElementById('messageInput');
@@ -1042,7 +1097,6 @@
             });
         });
 
-        // ---------- File upload (general) ----------
         window.uploadFile = function() {
             const fileInput = document.getElementById('fileInput');
             const file = fileInput.files[0];
@@ -1076,7 +1130,6 @@
             });
         };
 
-        // ---------- Contacts ----------
         window.showAddOptions = () => document.getElementById('addOptionsModal').style.display = 'flex';
         window.showAddContactModal = () => {
             closeModal('addOptionsModal');
@@ -1113,8 +1166,6 @@
                 body: JSON.stringify({ pinned: pin })
             }).then(() => loadChats());
         };
-
-        // ---------- Groups ----------
         window.showCreateGroupModal = () => {
             closeModal('addOptionsModal');
             fetchWithAuth('/api/contacts').then(res => res.json()).then(cs => {
@@ -1141,19 +1192,16 @@
                 loadChats();
             });
         };
-
         function closeModal(id) {
             document.getElementById(id).style.display = 'none';
         }
 
-        // Hide popups when clicking elsewhere
         document.addEventListener('click', (e) => {
             if (!e.target.closest('#reactionPopup') && !e.target.closest('.reaction')) {
                 reactionPopup.style.display = 'none';
             }
         });
 
-        // ---------- Initial loads ----------
         loadChats();
         loadMyAvatar();
         setInterval(() => {
