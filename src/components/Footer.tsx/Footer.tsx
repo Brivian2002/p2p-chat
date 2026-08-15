@@ -1,75 +1,73 @@
 import Link from 'next/link';
-import { ArrowUpRight, Github, Heart, ShieldCheck } from 'lucide-react';
-import { Logo } from '@/components/Logo';
+import { Github, Shield, Heart } from 'lucide-react';
 
-const productLinks = [
-  { href: '/', label: 'Tool' },
-  { href: '/docs', label: 'Documentation' },
-  { href: '/blog', label: 'Blog' },
-];
-
-const companyLinks = [
+const footerLinks = [
   { href: '/about', label: 'About' },
   { href: '/about-me', label: 'Creator' },
   { href: '/contact', label: 'Contact' },
-];
-
-const legalLinks = [
   { href: '/privacy', label: 'Privacy' },
   { href: '/terms', label: 'Terms' },
 ];
 
 export function Footer() {
   return (
-    <footer className="mt-24 border-t border-border/70 bg-background/55">
-      <div className="mx-auto max-w-6xl px-4 py-14 sm:px-6 lg:px-8">
-        <div className="grid gap-12 lg:grid-cols-[1.6fr_repeat(3,1fr)]">
-          <div className="max-w-sm">
-            <Link href="/" className="inline-flex rounded-lg focus-visible:ring-2 focus-visible:ring-ring">
-              <Logo size="sm" />
+    <footer className="border-t bg-background/80 backdrop-blur-lg mt-auto">
+      <div className="mx-auto max-w-5xl px-4 py-8">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
+          {/* Left: branding */}
+          <div className="space-y-2">
+            <Link href="/" className="inline-flex items-center gap-1.5">
+              <span className="font-bold text-foreground">
+                <span className="text-foreground">Drop</span>
+                <span className="text-primary">To</span>
+                <span className="text-foreground">Git</span>
+              </span>
             </Link>
-            <p className="mt-5 text-sm leading-7 text-muted-foreground">
-              A focused, browser-first way to move a project from your computer or z.ai session into a clean GitHub commit.
+            <p className="text-xs text-muted-foreground max-w-xs">
+              Push projects to GitHub without the terminal. Your token is never stored.
             </p>
-            <div className="mt-6 inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/8 px-3 py-1.5 text-xs font-medium text-primary">
-              <ShieldCheck className="h-3.5 w-3.5" />
-              Stateless by design
-            </div>
-          </div>
-
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">Product</p>
-            <div className="mt-4 space-y-3">
-              {productLinks.map((link) => <Link key={link.href} href={link.href} className="block text-sm text-muted-foreground transition-colors hover:text-foreground">{link.label}</Link>)}
-            </div>
-          </div>
-
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">Company</p>
-            <div className="mt-4 space-y-3">
-              {companyLinks.map((link) => <Link key={link.href} href={link.href} className="block text-sm text-muted-foreground transition-colors hover:text-foreground">{link.label}</Link>)}
-            </div>
-          </div>
-
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">Stay close</p>
-            <div className="mt-4 space-y-3">
-              <a href="https://github.com/Brivian2002/DropToGit" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground">
+            <div className="flex items-center gap-3">
+              <a
+                href="https://github.com/Brivian2002/DropToGit"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-muted-foreground hover:text-foreground transition-colors"
+                aria-label="DropToGit on GitHub"
+              >
                 <Github className="h-4 w-4" />
-                View on GitHub
-                <ArrowUpRight className="h-3.5 w-3.5" />
               </a>
-              <Link href="/donate" className="block text-sm text-muted-foreground transition-colors hover:text-foreground">Support the project</Link>
-              <div className="flex gap-4 pt-2">
-                {legalLinks.map((link) => <Link key={link.href} href={link.href} className="text-xs text-muted-foreground transition-colors hover:text-foreground">{link.label}</Link>)}
-              </div>
+              <span className="flex items-center gap-1 text-xs text-muted-foreground">
+                <Shield className="h-3 w-3" />
+                Secure & Stateless
+              </span>
             </div>
+          </div>
+
+          {/* Center: links */}
+          <div className="flex flex-wrap gap-x-4 gap-y-2 text-sm">
+            {footerLinks.map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                className="text-muted-foreground hover:text-foreground transition-colors"
+              >
+                {link.label}
+              </Link>
+            ))}
           </div>
         </div>
 
-        <div className="mt-12 flex flex-col gap-3 border-t border-border/70 pt-5 text-xs text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
-          <p>© {new Date().getFullYear()} DropToGit. Built by <Link href="/about-me" className="text-foreground transition-colors hover:text-primary">Bright Dumashie</Link>.</p>
-          <p className="flex items-center gap-1.5">Made with <Heart className="h-3.5 w-3.5 text-primary" /> in Accra, Ghana</p>
+        <div className="mt-6 pt-4 border-t flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-muted-foreground">
+          <p>
+            © {new Date().getFullYear()} DropToGit. Built by{' '}
+            <Link href="/about-me" className="hover:text-foreground transition-colors">
+              Bright Dumashie
+            </Link>
+            .
+          </p>
+          <p className="flex items-center gap-1">
+            Made with <Heart className="h-3 w-3 text-primary" /> in Accra, Ghana
+          </p>
         </div>
       </div>
     </footer>

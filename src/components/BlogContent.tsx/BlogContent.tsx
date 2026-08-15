@@ -322,12 +322,16 @@ function PostReader({
 export function BlogContent({ posts }: BlogContentProps) {
   const searchParams = useSearchParams();
   const catParam = searchParams.get('cat');
-  const [selectedCategory, setSelectedCategory] = useState('all');
-  const activeCategory = catParam || selectedCategory;
+  const [activeCategory, setActiveCategory] = useState(catParam || 'all');
   const [selectedPost, setSelectedPost] = useState<BloggerPost | null>(null);
   const [readerOpen, setReaderOpen] = useState(false);
   const [fullPost, setFullPost] = useState<BloggerPost | null>(null);
   const [loadingPost, setLoadingPost] = useState(false);
+
+  // Sync category when URL query param changes (e.g. from navbar dropdown)
+  useEffect(() => {
+    if (catParam) setActiveCategory(catParam);
+  }, [catParam]);
 
   // Count posts per category
   const categoryCounts = BLOG_CATEGORIES.reduce<Record<string, number>>((acc, cat) => {
@@ -394,7 +398,7 @@ export function BlogContent({ posts }: BlogContentProps) {
             cat={cat}
             isActive={activeCategory === cat.key}
             count={categoryCounts[cat.key] || 0}
-            onClick={() => setSelectedCategory(cat.key)}
+            onClick={() => setActiveCategory(cat.key)}
           />
         ))}
       </div>

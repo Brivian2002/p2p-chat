@@ -18,11 +18,11 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: {
-    default: "DropToGit — Ship projects to GitHub without the terminal",
+    default: "DropToGit — Drag & Drop Projects to GitHub",
     template: "%s — DropToGit",
   },
   description:
-    "Move a local folder or z.ai project into a clean GitHub commit from the browser. No CLI, no local setup, no credential storage.",
+    "Upload projects directly to GitHub without the terminal. Drag, drop, push. Simple, fast, secure.",
   keywords: [
     "GitHub",
     "Git",
@@ -33,15 +33,15 @@ export const metadata: Metadata = {
     "DropToGit",
   ],
   authors: [{ name: "Bright Dumashie" }],
-  creator: "Bright Dumashie",
+  creators: [{ name: "Bright Dumashie", url: "https://droptogit.vercel.app/about-me" }],
   icons: {
     icon: "/logo.png",
     apple: "/logo.png",
   },
   openGraph: {
-    title: "DropToGit — Ship projects to GitHub without the terminal",
+    title: "DropToGit — Drag & Drop Projects to GitHub",
     description:
-      "Move a local folder or z.ai project into a clean GitHub commit from the browser.",
+      "Upload projects directly to GitHub without the terminal. Drag, drop, push.",
     type: "website",
     siteName: "DropToGit",
   },
@@ -49,7 +49,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "DropToGit",
     description:
-      "Browser-first project delivery for GitHub.",
+      "Upload projects directly to GitHub without the terminal. Drag, drop, push.",
   },
 };
 

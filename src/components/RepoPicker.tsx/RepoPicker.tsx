@@ -55,11 +55,7 @@ export function RepoPicker({
   };
 
   useEffect(() => {
-    if (!token) return;
-    const timer = window.setTimeout(() => {
-      void fetchRepos();
-    }, 0);
-    return () => window.clearTimeout(timer);
+    if (token) fetchRepos();
   }, [token]);
 
   useEffect(() => {

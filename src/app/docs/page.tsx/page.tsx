@@ -17,27 +17,21 @@ import {
 export const metadata = { title: 'Documentation' };
 
 const roadmapItems = [
-  'Secret Scanner — scan files for API keys, tokens, and credentials before they reach a repository.',
-  '.gitignore-aware Filtering — respect existing .gitignore rules so unwanted files stay out of uploads.',
-  'Visual Folder Organizer — rearrange paths before pushing when a project needs a last-minute cleanup.',
-  'AI Commit Messages — generate meaningful conventional commit messages from file changes.',
-  'Deployment Handoff — connect a pushed repository to a Vercel deployment flow with fewer manual steps.',
-  'Paystack Donations — support the project with a quick, regional-friendly checkout experience.',
+  'Project Analyzer — detect your framework, flag common configuration issues, and suggest best practices before you push.',
+  'Smart Cleanup — automatically exclude node_modules, .env files, build artifacts, and other noise from your uploads.',
+  'Secret Scanner — scan files for API keys, tokens, and credentials before they ever reach your repository.',
+  '.gitignore-aware Filtering — respect existing .gitignore rules so unwanted files never get uploaded.',
+  'Visual Folder Organizer — drag and rearrange files and folders before pushing to get the exact structure you want.',
+  'File Preview — preview text files, images, and code directly in the browser before committing.',
+  'Branch Management — create, switch between, and push to different branches right from the interface.',
+  'AI Commit Messages — generate meaningful, conventional commit messages based on your file changes.',
+  'GitHub to Vercel Deployment — one-click deploy your repository to Vercel after pushing.',
+  'Paystack Donations — support the project with a quick and easy donation via Paystack.',
 ];
 
 export default function DocsPage() {
   return (
-    <div className="mx-auto grid max-w-6xl gap-8 px-4 py-10 sm:px-6 lg:grid-cols-[14rem_minmax(0,1fr)] lg:gap-12 lg:px-8">
-      <aside className="hidden lg:block">
-        <div className="sticky top-24 rounded-2xl border border-border/70 bg-card/45 p-4">
-          <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-primary">On this page</p>
-          <nav className="mt-4 space-y-1 text-sm" aria-label="Documentation sections">
-            {[['getting-started', 'Getting started'], ['pat', 'Create a PAT'], ['repo', 'Connect a repo'], ['push-modes', 'Push modes'], ['troubleshooting', 'Troubleshooting'], ['security', 'Security'], ['roadmap', 'Roadmap']].map(([href, label]) => <a key={href} href={`#${href}`} className="block rounded-lg px-2.5 py-2 text-muted-foreground transition-colors hover:bg-muted/70 hover:text-foreground">{label}</a>)}
-          </nav>
-          <div className="mt-5 border-t border-border/70 pt-4 text-xs leading-5 text-muted-foreground">Need to start now? <a href="/" className="font-medium text-primary hover:underline">Open the tool <span aria-hidden="true">→</span></a></div>
-        </div>
-      </aside>
-      <div className="min-w-0 max-w-3xl space-y-10">
+    <div className="mx-auto max-w-3xl px-4 py-8 space-y-10">
       {/* Page Heading */}
       <section className="space-y-2">
         <h1 className="text-3xl sm:text-4xl font-bold tracking-tight">
@@ -50,7 +44,7 @@ export default function DocsPage() {
       </section>
 
       {/* 1. Getting Started */}
-      <Card id="getting-started">
+      <Card>
         <CardHeader>
           <div className="flex items-center gap-3">
             <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary/10">
@@ -92,7 +86,7 @@ export default function DocsPage() {
       </Card>
 
       {/* 2. Creating a Fine-Grained PAT */}
-      <Card id="pat">
+      <Card>
         <CardHeader>
           <div className="flex items-center gap-3">
             <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-sky-accent/10">
@@ -194,7 +188,7 @@ export default function DocsPage() {
       </Card>
 
       {/* 3. Connecting Your Repo */}
-      <Card id="repo">
+      <Card>
         <CardHeader>
           <div className="flex items-center gap-3">
             <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary/10">
@@ -228,7 +222,7 @@ export default function DocsPage() {
       </Card>
 
       {/* 4. Replace vs Smart Update */}
-      <Card id="push-modes">
+      <Card>
         <CardHeader>
           <div className="flex items-center gap-3">
             <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-sky-accent/10">
@@ -279,7 +273,7 @@ export default function DocsPage() {
       </Card>
 
       {/* 5. Troubleshooting */}
-      <Card id="troubleshooting">
+      <Card>
         <CardHeader>
           <div className="flex items-center gap-3">
             <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-destructive/10">
@@ -353,7 +347,7 @@ export default function DocsPage() {
       </Card>
 
       {/* 6. Security FAQ */}
-      <Card id="security">
+      <Card>
         <CardHeader>
           <div className="flex items-center gap-3">
             <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary/10">
@@ -439,7 +433,7 @@ export default function DocsPage() {
       </Card>
 
       {/* 7. Roadmap */}
-      <Card id="roadmap">
+      <Card>
         <CardHeader>
           <div className="flex items-center gap-3">
             <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-sky-accent/10">
@@ -476,7 +470,6 @@ export default function DocsPage() {
           </p>
         </CardContent>
       </Card>
-      </div>
     </div>
   );
 }

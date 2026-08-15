@@ -79,11 +79,9 @@ export function Dropzone({ onFilesReady, isProcessing }: DropzoneProps) {
 
       // Check for folder
       const entries = Array.from(items);
-      const hasFolder = entries.some((item) => {
-        if (item.kind !== 'file') return false;
-        const entry = item.webkitGetAsEntry?.();
-        return Boolean(entry?.isDirectory);
-      });
+      const hasFolder = entries.some(
+        (item) => item.kind === 'file' && item.webkitGetAsEntry?.().isDirectory
+      );
 
       if (hasFolder) {
         // Collect all files from all dropped folders

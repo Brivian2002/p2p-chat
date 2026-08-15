@@ -10,8 +10,11 @@ import { useAppStore } from '@/store';
 import { Brain, Loader2, RotateCcw } from 'lucide-react';
 import { toast } from 'sonner';
 
-// The API returns the same analysis shape consumed by the display component.
-type AnalysisResponse = AnalysisResult;
+// Lighter response type — mirrors the API response shape (no binary content)
+interface AnalysisResponse
+  extends Omit<AnalysisResult, 'binaryFiles'> {
+  binaryFiles?: never;
+}
 
 export function AnalysisSection() {
   const files = useAppStore((s) => s.files);
@@ -24,6 +27,7 @@ export function AnalysisSection() {
   // ── Run analysis when files change ────────────────────────────
   useEffect(() => {
     if (files.length === 0) {
+      setAnalysis(null);
       prevFilesHashRef.current = '';
       return;
     }
